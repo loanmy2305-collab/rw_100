@@ -1,7 +1,7 @@
 import java.time.LocalDate;
 
 public class GroupAccount {
-    int id;
+    Group group;
     Account account;
     LocalDate joinDate;
 
