@@ -1,5 +1,5 @@
 public class ExamQuestion {
-    int id;
-    String name;
+   Exam exam;
+   Question question;
 
 }
