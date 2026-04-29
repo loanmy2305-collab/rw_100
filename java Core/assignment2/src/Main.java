@@ -37,25 +37,28 @@ public class Main {
         acc1.id = 1;
         acc1.username = "Loan";
         acc1.fullname = "Nguyen Thi Loan";
+        acc1.email = "loanmy2305@gmail.com";
         acc1.position = pos1;
         acc1.department = dep1;
-        acc1.createDate = LocalDate.of(2026,5,23);
+        acc1.createDate = LocalDate.of(2026, 5, 23);
 
         Account acc2 = new Account();
         acc2.id = 2;
         acc2.username = "My";
         acc2.fullname = "Nguyen Thi Tra My";
+        acc2.email = "loanmy2305@gmail.com";
         acc2.position = pos1;
         acc2.department = dep1;
-        acc2.createDate = LocalDate.of(2017,7,07);
+        acc2.createDate = LocalDate.of(2017, 7, 07);
 
         Account acc3 = new Account();
         acc3.id = 3;
         acc3.username = "Huy";
         acc3.fullname = "Nguyen Gia Huy";
+        acc3.email = "loanmy2305@gmail.com";
         acc3.position = pos1;
         acc3.department = dep1;
-        acc3.createDate = LocalDate.of(2020,2,19);
+        acc3.createDate = LocalDate.of(2020, 2, 19);
 
         // Group
         Group Group1 = new Group();
@@ -78,17 +81,17 @@ public class Main {
 
         // GroupAccount
         GroupAccount groupAccount1 = new GroupAccount();
-        groupAccount1.id = 1;
+        groupAccount1.group = groupAccount1.group;
         groupAccount1.account = acc1;
         groupAccount1.joinDate = LocalDate.now();
 
         GroupAccount groupAccount2 = new GroupAccount();
-        groupAccount2.id = 2;
+        groupAccount2.group = groupAccount2.group;
         groupAccount2.account = acc1;
         groupAccount2.joinDate = LocalDate.now();
 
         GroupAccount groupAccount3 = new GroupAccount();
-        groupAccount3.id = 1;
+        groupAccount3.group = groupAccount3.group;
         groupAccount3.account = acc1;
         groupAccount3.joinDate = LocalDate.now();
 
@@ -159,7 +162,7 @@ public class Main {
         exam1.id = 1;
         exam1.code = "ABC123";
         exam1.category = categoryQuestion1;
-        exam1.Creator =acc1;
+        exam1.Creator = acc1;
         exam1.Duration = 60;
         exam1.title = "SQL";
         exam1.createDate = LocalDate.now();
@@ -168,7 +171,7 @@ public class Main {
         exam2.id = 2;
         exam2.code = "DEF123";
         exam2.category = categoryQuestion1;
-        exam2.Creator =acc1;
+        exam2.Creator = acc1;
         exam2.Duration = 70;
         exam2.title = "NET";
         exam2.createDate = LocalDate.now();
@@ -177,23 +180,23 @@ public class Main {
         exam3.id = 3;
         exam3.code = "GHJ123";
         exam3.category = categoryQuestion1;
-        exam3.Creator =acc1;
+        exam3.Creator = acc1;
         exam3.Duration = 80;
         exam3.title = "Java";
         exam3.createDate = LocalDate.now();
 
         // ExamQuestion
         ExamQuestion examQuestion1 = new ExamQuestion();
-        examQuestion1.id = 1;
-        examQuestion1.name = "A";
+        examQuestion1.exam = exam1;
+        examQuestion1.question = question1;
 
         ExamQuestion examQuestion2 = new ExamQuestion();
-        examQuestion2.id = 2;
-        examQuestion2.name = "B";
+        examQuestion2.exam = exam1;
+        examQuestion2.question = question1;
 
         ExamQuestion examQuestion3 = new ExamQuestion();
-        examQuestion3.id = 3;
-        examQuestion3.name = "C";
+        examQuestion3.exam = exam1;
+        examQuestion3.question = question1;
 
 
         // in ra thông tin của department
@@ -203,10 +206,11 @@ public class Main {
         // in ra thông tin của account
         System.out.println("id là:" + acc1.id);
         System.out.println("username là:" + acc1.username);
-        System.out.println("fullname là:" +  acc1.fullname);
-        System.out.println("department là:" +  acc1.department.name);
-        System.out.println("position là:" +  acc1.position.name);
-        System.out.println("creatdate là:" +  acc1.createDate);
+        System.out.println("fullname là:" + acc1.fullname);
+        System.out.println("email là:" + acc1.email);
+        System.out.println("department là:" + acc1.department.name);
+        System.out.println("position là:" + acc1.position.name);
+        System.out.println("creatdate là:" + acc1.createDate);
 
         // in ra thông tin của position
         System.out.println("id là:" + pos1.id);
@@ -219,7 +223,7 @@ public class Main {
         System.out.println("createDate là:" + Group1.createDate);
 
         // in ra thông tin của GroupAccount
-        System.out.println("id là:" + groupAccount1.id);
+        System.out.println("group là:" + groupAccount1.group);
         System.out.println("account là:" + groupAccount1.account);
         System.out.println("joinDate là:" + groupAccount1.joinDate);
 
@@ -255,35 +259,44 @@ public class Main {
         System.out.println("createDate là:" + exam1.createDate);
 
         // in ra thông tin của ExamQuestion
-        System.out.println("id là:" + examQuestion1.id);
-        System.out.println("name là:" + examQuestion1.name);
+        System.out.println("exam là:" + examQuestion1.exam);
+        System.out.println("question là:" + examQuestion1.question);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        Department[] departments = {dep1, dep2, dep3};
+        Position[] positions = {pos1, pos2, pos3};
+        Account[] accounts = {acc1, acc2, acc3};
+        GroupAccount[] groupAccounts = {groupAccount1, groupAccount2, groupAccount3};
+        Group[] groups = {Group1, Group2, Group3};
+        TypeQuestion[] typeQuestions = {typeQuestion1, typeQuestion2};
+        CategoryQuestion[] categoryQuestions = {categoryQuestion1, categoryQuestion2, categoryQuestion3};
+        Question[] questions = {question1, question2, question3};
+        Answer[] answers = {answer1, answer2, answer3};
+        Exam[] exams = {exam1, exam2, exam3};
+        ExamQuestion[] examQuestions = {examQuestion1, examQuestion2, examQuestion3};
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -9,8 +9,11 @@ public class Exercise4 {
         Scanner scanner = new Scanner(System.in);
         System.out.print("nhập xâu kí tự là: ");
         String a = scanner.nextLine();
-        String[] words = a.split("\\s ");
+        a.trim();
+        String[] words = a.trim().split("\\s+ ");
         System.out.println("số lượng các từ: " + words.length);
+        for (String aa: words);
+            System.out.println(a);
     }
 
     // Question 2:
@@ -33,7 +36,16 @@ public class Exercise4 {
         Scanner scanner = new Scanner(System.in);
         System.out.print("nhập tên là:");
         String name = scanner.nextLine();
-        // e chưa biết làm
+        // cắt chuỗi -> mảng từng từ
+        //viết hoa chữ cái đầu tiên của từng từ
+        // coojgn lại với nhau
+        String[] names = name.trim().split("\\s+");
+       StringBuilder stringBuilder = new StringBuilder();
+        for (String s: names){
+            System.out.println(Character.toUpperCase(s.charAt(0))).append(s.substring(1)).append(" ");
+
+        }
+
     }
 
     //Question 5:

@@ -5,7 +5,5 @@ public class Exercise5 {
 
     public static void question1(Department department){
 
-
-        // em chưa làm được bài ạ 
     }
 }
