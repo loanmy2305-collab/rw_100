@@ -1,6 +1,8 @@
 package backend;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Exercise5 {
     // Question 1: inheritance
@@ -21,6 +23,8 @@ public class Exercise5 {
 
 
     class CanBo{
+
+
         protected String name;
         protected int age;
         protected String gender;
@@ -39,6 +43,39 @@ public class Exercise5 {
             System.out.println("Giới tính là :" + gender);
             System.out.println("Địa chỉ là :" + address);
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public String getGender() {
+            return gender;
+        }
+
+        public void setGender(String gender) {
+            this.gender = gender;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
     }
 
         class CongNhan extends CanBo{
@@ -53,7 +90,15 @@ public class Exercise5 {
                     super.display();
                     System.out.println("Bậc: " + bac);
                 }
-    }
+
+            public int getBac() {
+                return bac;
+            }
+
+            public void setBac(int bac) {
+                this.bac = bac;
+            }
+        }
 
         class KySu extends CanBo{
         private String NghanhDaoTao;
@@ -66,6 +111,14 @@ public class Exercise5 {
             public void display(){
                 super.display();
                 System.out.println("Nghành đào tạo: " + NghanhDaoTao);
+            }
+
+            public String getNghanhDaoTao() {
+                return NghanhDaoTao;
+            }
+
+            public void setNghanhDaoTao(String nghanhDaoTao) {
+                NghanhDaoTao = nghanhDaoTao;
             }
         }
 
@@ -81,14 +134,63 @@ public class Exercise5 {
             super.display();
             System.out.println("Công việc là: " + CongViec);
         }
+
+        public String getCongViec() {
+            return CongViec;
+        }
+
+        public void setCongViec(String congViec) {
+            CongViec = congViec;
+        }
     }
 
 
-    class QLCB{
-        private ArrayList<CanBo>list = new ArrayList<>();
+//    class QLCB{
+//        private ArrayList<CanBo>list = new ArrayList<>();
 
 
+        public static void QLCB(){
+            Scanner scanner = new Scanner(System.in);
+            List<CanBo> canBos = new ArrayList<>();
+
+            while (true){
+                System.out.println("====Mời bạn chọn chức năng =====");
+                System.out.println("1.Thêm mới cán bộ ");
+                System.out.println("2.tìm kiếm theo họ tên");
+                System.out.println("3.hiển thị thông ti về danh sách các cán bọ");
+                System.out.println("4.nhâập vào tên của cán bộ và delete cán bộ đó");
+                System.out.println("5.thoát khỏi chương trình");
+                String choose = scanner.nextInt();
+                switch (choose) {
+                    case "1":
+                        System.out.println("chức năng thêm mới cán bộ");
+                        System.out.println("mời bạn nhaaph họ tên: ");
+
+                        break;
+                    case "2":
+                        System.out.println("Thêm mới cán bộ");
+                        break;
+                    case "3":
+                        System.out.println("tìm kiếm theo họ tên");
+                        break;
+                    case "4":
+                        System.out.println("hiển thị thông ti về danh sách các cán bọ");
+                        break;
+                    case "5":
+                        System.out.println("nhâập vào tên của cán bộ và delete cán bộ đó");
+                        break;
+                    default:
+                        System.out.println();
+
+
+                }
+
+            }
         }
+
+
+
+
 
 
     //Question 3 (Optional): constructor inheritance

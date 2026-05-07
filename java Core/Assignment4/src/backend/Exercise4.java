@@ -17,6 +17,7 @@ public  class Exercise4 {
     private String hometown;
     private float score;
 
+    //
     public Student(String name,String hometown,float score){
         this.name = name;
         this.hometown = hometown;
@@ -27,8 +28,10 @@ public  class Exercise4 {
         this.score = score;
     }
 
+    // cộng thêm điểm
     public void addScore(float Extra ){
-        this.score = Extra;
+
+        this.score += Extra;
     }
 
     public String getRack() {
@@ -43,8 +46,37 @@ public  class Exercise4 {
         }
     }
 
-    public void printInfo(){
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getHometown() {
+            return hometown;
+        }
+
+        public void setHometown(String hometown) {
+            this.hometown = hometown;
+        }
+
+        public float getScore() {
+            return score;
+        }
+
+        public void printInfo(){
         System.out.println("tên là: " + name);
+
         System.out.println("que quán là: " + hometown);
         System.out.println("điểm là: " + score);
         System.out.println("học lực là: " + getRack());

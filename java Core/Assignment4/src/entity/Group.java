@@ -3,11 +3,11 @@ package entity;
 import java.util.Date;
 
 public class Group {
-    int id;
-    String GroupName;
-    Date createDate;
-    Account creator;
-    Account[] accounts;
+    private int id;
+    private String GroupName;
+    private Date createDate;
+    private Account creator;
+    private Account[] accounts;
 
 
     public Group(){

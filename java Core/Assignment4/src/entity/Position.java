@@ -1,8 +1,8 @@
 package entity;
 
 public class Position {
-    int id;
-    PositionName name;
+    private int id;
+    private PositionName name;
 
 
     public enum PositionName{

@@ -3,15 +3,15 @@ package entity;
 import java.util.Date;
 
 public class Account {
-    int accountID;
-    String username;
-    String email;
-    String fullname;
-    String FirstName;
-    String LastName;
-    String Position ;
-    Department department;
-    Date createDate;
+    private int accountID;
+    private String username;
+    private String email;
+    private String fullname;
+    private String FirstName;
+    private String LastName;
+    private String Position ;
+    private Department department;
+    private Date createDate;
 
     public Account(){
     }

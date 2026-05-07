@@ -1,8 +1,8 @@
 package entity;
 
 public class Department {
-    int id;
-    String name;
+    private int id;
+    private String name;
 
     public Department(){
     }
