@@ -16,6 +16,24 @@ public class Account {
 
     }
 
+    public Account(int id, String username, String fullName) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+    }
+
+    public Account(int id, String fullName) {
+        this.id = id;
+        this.fullName = fullName;
+    }
+
+    public Account(int id, String username, String fullName, String email) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+    }
+
     public Account(String username, String fullName, String email, Department department, Position position) {
         this.id = ACC_ID++;
         this.username = username;
