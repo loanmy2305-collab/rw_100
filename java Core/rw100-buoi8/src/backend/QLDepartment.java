@@ -2,21 +2,24 @@ package backend;
 
 
 import entity.Department;
-import utils.JDBUtils;
+import utils.JDBCUtils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class QLDepartment {
 
     // lấy ds các phòng ban trong DB và in ra
-    public static List<Department> findAllDepartment() throws ClassNotFoundException{
+    public static List<Department> findAllDepartment() throws ClassNotFoundException {
         List<Department> departments = new ArrayList<>();// lưu lại dữ liệu lấy từ DB
-
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBUtils.getConnection();
+
+            Connection connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "select * from department;";
             Statement statement = connection.createStatement();
@@ -27,12 +30,13 @@ public class QLDepartment {
                 Department dep = new Department(id, name);
                 departments.add(dep);
             }
-
+            JDBCUtils.closeConnection(connection, statement, rs);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return departments;
     }
+
 
     // tìm các phòng ban có chữ xyz  chưa biết trước
     //  select * from department where department_name like '...';
@@ -42,7 +46,7 @@ public class QLDepartment {
 
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
 
             // b2: tìm các phòng ban có tên là name
             String sql = "select * from department where department_name like ? and department_id = ?";
@@ -56,8 +60,7 @@ public class QLDepartment {
                 Department dep = new Department(id, name);
                 departments.add(dep);
             }
-
-
+            JDBCUtils.closeConnection(connection, statement, rs);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +77,7 @@ public class QLDepartment {
         List<Department> departments = new ArrayList<>();
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
             // b2:in ra phòng ban có id >=2 nhân viên
             String sql = "select d.*, count(a.accountID) as soluong\n" +
                     "from Departmnet d\n" +
@@ -90,7 +93,7 @@ public class QLDepartment {
                 departments.add(dep);
             }
 
-
+            JDBCUtils.closeConnection(connection, statement, rs);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,7 +104,7 @@ public class QLDepartment {
     public static boolean creatDepartment(String name) throws ClassNotFoundException{
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "insert into department (department_name) values (?)";
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -114,7 +117,7 @@ public class QLDepartment {
 //                return false;
 //            }
 
-            JDBUtils.closeConnection(connection, statement, null );
+            JDBCUtils.closeConnection(connection, statement, null );
             return c > 0;
 
         } catch (Exception e) {
@@ -127,11 +130,11 @@ public class QLDepartment {
     // nhập vào tên phòng ban ,xóa phòng ban dđoó đi
 
 
-        public static boolean deteleDepartment(String deleteName) throws ClassNotFoundException{
+        public static boolean deleteDepartment(String deleteName) throws ClassNotFoundException{
 
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
             // b2: xóa theo thên phòng ban
             String sql = "delete from department\n" +
                     "where department_Name like ?;";
@@ -145,7 +148,7 @@ public class QLDepartment {
 //                return false;
 //            }
 
-            JDBUtils.closeConnection(connection, statement, null );
+            JDBCUtils.closeConnection(connection, statement, null );
             return c > 0;
 
         } catch (Exception e) {
@@ -161,7 +164,7 @@ public class QLDepartment {
 
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
             // b2: xóa theo thên phòng ban
             String sql = "update department set department_name = ? where department_id = ?;";
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -175,7 +178,7 @@ public class QLDepartment {
 //                return false;
 //            }
 
-            JDBUtils.closeConnection(connection, statement, null );
+            JDBCUtils.closeConnection(connection, statement, null );
             return c > 0;
 
         } catch (Exception e) {

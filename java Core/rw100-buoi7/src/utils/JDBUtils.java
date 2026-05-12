@@ -1,0 +1,37 @@
+package utils;
+
+import java.sql.*;
+
+public class JDBUtils {
+    public static Connection getConnection(){
+            String url = "jdbc:mysql://localhost:3306/rw100_testing_system";
+            String username = "root";
+            String password = "root";// mk mysql
+
+            try {
+                // b1: kết nối đến DB
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection connection = DriverManager.getConnection(url, username, password);
+//                if (connection != null) {
+//                    System.out.println("Kết nối DB thành công");
+//                }
+                return connection;
+            }catch (Exception e) {
+                System.out.println("Kết nối DB ko thành công");
+            }
+            return null;
+    }
+    //close cho 3 interface connection, statement, rs
+    public static void closeConnection(Connection connection, Statement statement, ResultSet rs) throws ClassNotFoundException, SQLException {
+        // ếu cái nào có sưz liệu (đang mở) != null
+        if(connection != null) {
+            connection.close();
+        }
+        if(statement != null) {
+            statement.close();
+        }
+        if(rs != null){
+            rs.close();
+        }
+    }
+}

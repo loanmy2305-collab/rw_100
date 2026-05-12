@@ -4,7 +4,7 @@ import entity.Account;
 import entity.Department;
 import entity.Position;
 import enums.PositionName;
-import utils.JDBUtils;
+import utils.JDBCUtils;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -17,9 +17,9 @@ public class QLAccount {
 
         try {
             //b1 kết nốt Acc
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
             //b2:
-            String sql =  "select acc.*, de.department_name, po.position_name \n" +
+            String sql = "select acc.*, de.department_name, po.position_name \n" +
                     "from account acc\n" +
                     "left join department de  on acc.department_id = de.department_id\n" +
                     "left join position po on po.position_id = acc.position_id;\n";
@@ -44,20 +44,14 @@ public class QLAccount {
                 Account acc = new Account(id, userName, fullName, email);
                 accounts.add(acc);
             }
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
-            System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", "ID", "FullName", "Email", "Username", "Tên phòng ban", "Tên chức vụ");
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
-            for (Account account : accounts) {
-                System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", account.getId(), account.getFullName(), account.getEmail(), account.getUsername(), account.getDepartment().getName(), account.getPosition().getName().name());
-            }
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
+            JDBCUtils.closeConnection(connection, statement, rs);
 
-            } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
 
-            }
-        return accounts;
         }
+        return accounts;
+    }
 
 
     public static List<Account> findByfullName(String searchfullName) throws ClassNotFoundException, SQLException {
@@ -65,7 +59,7 @@ public class QLAccount {
 
         try {
             //b1 kết nốt Acc
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
 
             // b2: tìm các phòng ban có tên là name
             String sql = "select acc.*, de.department_name, po.position_name \n" +
@@ -94,16 +88,7 @@ public class QLAccount {
                 accounts.add(account);
             }
 
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
-            System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", "ID", "FullName", "Email", "Username", "Tên phòng ban", "Tên chức vụ");
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
-            for (Account account : accounts) {
-                System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", account.getId(), account.getFullName(), account.getEmail(), account.getUsername(), account.getDepartment().getName(), account.getPosition().getName().name());
-            }
-            if (accounts.size() == 0) {
-                System.out.println("Không có kết quả!");
-            }
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
+            JDBCUtils.closeConnection(connection, statement, rs);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,7 +102,7 @@ public class QLAccount {
 
         try {
             //b1 kết nốt Acc
-            Connection connection = JDBUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
             // b2: tìm các phòng ban có tên là name
             String sql = "select acc.*, de.department_name, po.position_name \n" +
                     "from account acc\n" +
@@ -146,20 +131,78 @@ public class QLAccount {
                 accounts.add(account);
             }
 
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
-            System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", "ID", "FullName", "Email", "Username", "Tên phòng ban", "Tên chức vụ");
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
-            for (Account account : accounts) {
-                System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", account.getId(), account.getFullName(), account.getEmail(), account.getUsername(), account.getDepartment().getName(), account.getPosition().getName().name());
-            }
-            if (accounts.size() == 0) {
-                System.out.println("Không có kết quả!");
-            }
-            System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
+            JDBCUtils.closeConnection(connection, statement, rs);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return accounts;
+    }
+
+    // thêm mới chức năng
+
+    public static boolean creatAccount(String username, String fullName, String email, int depId, int posId ) throws ClassNotFoundException {
+        try {
+            Connection connection = JDBCUtils.getConnection();
+
+            String sql = "insert into account (username, full_name ,email, department_Id, position_Id) values ( ?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, fullName);
+            statement.setString(3, email);
+            statement.setInt(4, depId);
+            statement.setInt(5, posId);
+
+            int c = statement.executeUpdate();
+            JDBCUtils.closeConnection(connection, statement, null );
+            return c > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  false;
+    }
+
+    // sửa
+
+    public static boolean updateAccount(int id, int updateDepId, int updatePosId) throws ClassNotFoundException {
+        try {
+            Connection connection = JDBCUtils.getConnection();
+
+            String sql = "update account set department_id = ? , position_id = ? where account_id = ? ";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.setInt(2, updateDepId);
+            statement.setInt(3, updatePosId);
+
+            int c = statement.executeUpdate();
+            JDBCUtils.closeConnection(connection, statement, null );
+            return c > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  false;
+    }
+
+    // xóa
+
+    public static boolean deleteAccount(int id) throws ClassNotFoundException {
+        try {
+            Connection connection = JDBCUtils.getConnection();
+
+            String sql = "delete from account where account_id = ?; ";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+
+
+            int c = statement.executeUpdate();
+            JDBCUtils.closeConnection(connection, statement, null );
+            return c > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  false;
     }
 
 
