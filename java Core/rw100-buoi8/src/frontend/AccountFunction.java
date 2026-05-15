@@ -6,68 +6,57 @@ import entity.Account;
 import entity.Department;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import static backend.QLTK.accounts;
 
 public class AccountFunction {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void run() throws SQLException, ClassNotFoundException {
+    public static void run() throws ClassNotFoundException, SQLException {
+        List<Account> accounts = new ArrayList<>();
         while (true) {
-            System.out.println("=== mời bạn chọn chức năng ===");
-            System.out.println("1.xem ds tài khoan");
-            System.out.println("2.them mới tài khoan");
-            System.out.println("3.update tài khoan");
-            System.out.println("4.xóa tài khoan");
-            System.out.println("5.tìm kiếm chức vụ theo tên");
-            System.out.println("6.tìm kiếm chức vụ theo tên và username");
-            System.out.println("7.thoát");
-
+            System.out.println("=== Mời bạn chọn chức năng ===");
+            System.out.println("1. Xem ds account");
+            System.out.println("2. Thêm mới account");
+            System.out.println("3. Xóa account theo tên");
+            System.out.println("4. Update account theo ID");
+            System.out.println("5. Tìm kiếm account họ tên");
+            System.out.println("6. Thoát");
             String choice = scanner.nextLine();
             switch (choice) {
                 case "1":
-                    List<Account> accounts = QLAccount.findAllAccount();
-                    showAccounts(accounts);
+                    accounts = QLAccount.findAllAccount();
+                    showAccount(accounts);
                     break;
                 case "2":
                     insertAccount();
                     break;
                 case "3":
-                    updateAccount();
-                    break;
-                case "4":
                     deleteAccount();
                     break;
+                case "4":
+                    updateAccount();
+                    break;
                 case "5":
-                    findByfullName();
+                    findByIdAndName();
                     break;
                 case "6":
-                    findByfullNameAndUsername();
-                    break;
-                case "7":
                     return;
                 default:
-                    System.out.println("Chọn sai, chọn lại!");
-
+                    System.out.println("Nhập sai, nhập lại.");
             }
         }
     }
 
+    public static void findByIdAndName() {
+        System.out.println("Nhập tên cần tìm: ");
+        String name = scanner.nextLine();
 
-    public static void findByfullName() throws SQLException, ClassNotFoundException {
-        System.out.print("Nhập đầy đủ tên cần tìm: ");
-        String fullName = scanner.nextLine();
-        List<Account> accounts = QLAccount.findByfullName(fullName);
-        showAccounts(accounts);
-    }
-
-    public static void findByfullNameAndUsername() throws SQLException, ClassNotFoundException {
-        System.out.print("Nhập đầy đủ tên cần tìm: ");
-        String fullName = scanner.nextLine();
-        System.out.print("Nhập username cần tìm: ");
-        String username = scanner.nextLine();
-        List<Account> accounts = QLAccount.findByfullNameAndUsername(fullName, username);
-        showAccounts(accounts);
+        List<Account> accounts = QLAccount.findByName(name);
+        showAccount(accounts);
     }
 
 
@@ -126,27 +115,17 @@ public class AccountFunction {
         }
     }
 
-    public static void showAccounts(List<Account> accounts) {
-        System.out.println("\n+------+----------------------+----------------------+----------------------+----------------------+----------------------+");
-        System.out.printf("|%5s|%20s||%5s|%20s|%20s|%20s|\n",
-                "ID", "Email", "Username", "Full Name", "Department", "Position");
-        System.out.println("+------+----------------------+----------------------+----------------------+----------------------+----------------------+");
-
-        for (Account acc : accounts) {
-            System.out.printf("|%5s|%20s||%20s|%20s|%20s|%20s|\n",
-                    acc.getId(),
-                    acc.getEmail(),
-                    acc.getUsername(),
-                    acc.getFullName(),
-                    (acc.getDepartment() != null ? acc.getDepartment().getName() : "N/A"),
-                    (acc.getPosition() != null ? acc.getPosition().getName() : "N/A")
-            );
+    public static void showAccount(List<Account> accounts) {
+        System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
+        System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", "ID", "FullName", "Email", "Username", "Tên", "Tên chức vụ");
+        System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
+        for (Account account : accounts) {
+            System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", account.getId(), account.getFullName(), account.getEmail(), account.getUsername(), account.getDepartment().getName(), account.getPosition().getName().name());
         }
-
-        if (accounts.size() == 0) {
+        if (accounts.isEmpty()) {
             System.out.println("Không tìm thấy");
         }
-        System.out.println("+------+----------------------+----------------------+----------------------+----------------------+----------------------+");
+        System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
     }
 }
 

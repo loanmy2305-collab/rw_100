@@ -1,15 +1,22 @@
-package backend;
+package org.example.backend.repository.impl;
 
-import entity.Position;
-import enums.PositionName;
-import utils.JDBCUtils;
+import org.example.backend.repository.IDepartmentRepository;
+import org.example.backend.repository.IPositionRepository;
+import org.example.entity.Position;
+import org.example.enums.PositionName;
+import org.example.utils.JDBCUtils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QLPosition {
-    public static List<Position> findAllPosition() throws ClassNotFoundException, SQLException {
+public class PositionRepositoryImpl implements IPositionRepository {
+
+    @Override
+    public List<Position> findAll() {
         List<Position> positions = new ArrayList<>();
 
         try {
@@ -34,8 +41,71 @@ public class QLPosition {
         return positions;
     }
 
+    @Override
+    public boolean insert(String name) {
+        try {
+            Connection connection = JDBCUtils.getConnection();
 
-    public static List<Position> findByName(String searchName) {
+            String sql = "insert into position (position_name) values (?); ";
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, name);
+
+            int c = statement.executeUpdate();
+            JDBCUtils.closeConnection(connection, statement, null );
+            return c > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  false;
+
+    }
+
+    @Override
+    public boolean deletePosition(int id) {
+        try {
+            Connection connection = JDBCUtils.getConnection();
+
+            String sql = "delete from position where account_id = ?;\n";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+
+
+
+            int c = statement.executeUpdate();
+            JDBCUtils.closeConnection(connection, statement, null );
+            return c > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  false;
+    }
+
+    @Override
+    public boolean updatePosition(int id, String updateName) {
+        try {
+            Connection connection = JDBCUtils.getConnection();
+
+            String sql = "update position set position_name = ? where position_id = ? ";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.setString(2, updateName);
+
+
+            int c = statement.executeUpdate();
+            JDBCUtils.closeConnection(connection, statement, null );
+            return c > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  false;
+    }
+
+    @Override
+    public List<Position> findByName(String searchName) {
         List<Position> positions = new ArrayList<>();// lưu lại dữ liệu lấy từ DB
         try {
             // b1: kết nối đến DB
@@ -62,72 +132,7 @@ public class QLPosition {
         return positions;
     }
 
-    //thêm
-
-    public static boolean creatPosition(String name) throws ClassNotFoundException {
-        try {
-            Connection connection = JDBCUtils.getConnection();
-
-            String sql = "insert into position (position_name) values (?); ";
-            PreparedStatement statement = connection.prepareStatement(sql);
-
-            statement.setString(1, name);
-
-            int c = statement.executeUpdate();
-            JDBCUtils.closeConnection(connection, statement, null );
-            return c > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return  false;
-    }
-
-    // sửa
-
-    public static boolean updatePosition(int id, String updatename) throws ClassNotFoundException {
-        try {
-            Connection connection = JDBCUtils.getConnection();
-
-            String sql = "update position set position_name = ? where position_id = ? ";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            statement.setString(2, updatename);
-
-
-            int c = statement.executeUpdate();
-            JDBCUtils.closeConnection(connection, statement, null );
-            return c > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return  false;
-    }
-
-    // xóa
-
-    public static boolean deletePosition(int id) throws ClassNotFoundException {
-        try {
-            Connection connection = JDBCUtils.getConnection();
-
-            String sql = "delete from position where account_id = ?;\n";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-
-
-
-            int c = statement.executeUpdate();
-            JDBCUtils.closeConnection(connection, statement, null );
-            return c > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return  false;
-    }
-
-
-
 
 }
+
+

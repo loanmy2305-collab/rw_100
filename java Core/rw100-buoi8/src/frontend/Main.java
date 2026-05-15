@@ -14,15 +14,16 @@ public class Main {
    public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
        DepartmentFunction.run();
+       //AccountFunction.run();
 //        //QLTK.run();
 //       // QLDepartment.departmentHave2Employee();
 //
 //        //  QLAccount.showAccount();
 //        // QLDepartment.showDepartment();
-////        List<Department> departments = QLDepartment.findAllDepartment();
-////        showDepartment(departments);
-////        List<Department> departments1 = QLDepartment.findAllDepartment();
-////        showDepartment(departments1);
+//       List<Department> departments = QLDepartment.findAllDepartment();
+//      showDepartment(departments);
+//      List<Department> departments1 = QLDepartment.findAllDepartment();
+//       showDepartment(departments1);
 //        //insertDepartment();
 //        //deteleDepartment();
 //        //updateDepartment();

@@ -54,22 +54,21 @@ public class QLAccount {
     }
 
 
-    public static List<Account> findByfullName(String searchfullName) throws ClassNotFoundException, SQLException {
-        List<Account> accounts = new ArrayList<>();
-
+    public static List<Account> findByName(String searchName) {
+        List<Account> accounts = new ArrayList<>();// lưu lại dữ liệu lấy từ DB
         try {
-            //b1 kết nốt Acc
+            // b1: kết nối đến DB
             Connection connection = JDBCUtils.getConnection();
-
-            // b2: tìm các phòng ban có tên là name
+            // b2: lấy dữ liệu từ bảng account
             String sql = "select acc.*, de.department_name, po.position_name \n" +
                     "from account acc\n" +
                     "left join department de on acc.department_id = de.department_id\n" +
                     "left join position po on acc.position_id = po.position_id " +
                     "where acc.full_name like ? ;";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, "%" + searchfullName + "%");
-            ResultSet rs = statement.executeQuery();
+            PreparedStatement prepareStatement = connection.prepareStatement(sql);
+            prepareStatement.setString(1, "%" + searchName + "%");
+
+            ResultSet rs = prepareStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
             while (rs.next()) {// lặp qua qua từng dòng của rs
                 Integer id = rs.getInt("account_id");// lấy giá trị từ cloumn account_id
                 String email = rs.getString("email");//lấy giá trị từ cloumn account_name
@@ -79,24 +78,23 @@ public class QLAccount {
                 String departmentName = rs.getString("department_name");
                 Integer positionID = rs.getInt("position_id");
                 String positionName = rs.getString("position_name");
-                LocalDate createDate = rs.getDate("create_date").toLocalDate();
+                Date createDate = rs.getDate("create_date");
 
                 Department department = new Department(departmentID, departmentName);
                 Position position = new Position(positionID, PositionName.valueOf(positionName));
 
-                Account account = new Account(id, userName, fullName, email, department, position, createDate);
+                Account account = new Account(id, userName, fullName, email, department, position, createDate.toLocalDate());
                 accounts.add(account);
+                JDBCUtils.closeConnection(connection, prepareStatement, rs);
             }
-
-            JDBCUtils.closeConnection(connection, statement, rs);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return accounts;
+        } catch (Exception e) {// show các lỗi lien quan đén logic xử lý
+            e.printStackTrace();// show ra exception
         }
         return accounts;
     }
 
-
-    public static List<Account> findByfullNameAndUsername(String searchfullName, String searchusername) throws ClassNotFoundException, SQLException {
+    public static List<Account> findByIdAndName(String searchfullName, String searchusername) throws ClassNotFoundException, SQLException {
 
         List<Account> accounts = new ArrayList<>();
 

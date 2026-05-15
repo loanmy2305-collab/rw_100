@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class QLTK {
-    private static List<Account> accounts = new ArrayList<>();
+    public static List<Account> accounts = new ArrayList<>();
     private static List<Department> departments = new ArrayList<>();
     private static List<Position> positions = new ArrayList<>();
     private static Scanner sc = new Scanner(System.in);

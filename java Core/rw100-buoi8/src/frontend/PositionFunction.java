@@ -53,7 +53,7 @@ public class PositionFunction {
     public static void findByPositionName() throws ClassNotFoundException, SQLException {
         System.out.print("Nhập tên chuc vụ tìm kiếm: ");
         String name = scanner.nextLine();
-        List<Position> positions = QLPosition.findByPositionName(name);
+        List<Position> positions = QLPosition.findByName(name);
         showPosition(positions);
     }
 
