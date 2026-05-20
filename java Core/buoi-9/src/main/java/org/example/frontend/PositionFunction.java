@@ -3,6 +3,7 @@ package org.example.frontend;
 import org.example.backend.controller.DepartmentController;
 import org.example.backend.controller.PositionController;
 import org.example.entity.Position;
+import org.example.enums.PositionName;
 import org.example.utils.JDBCUtils;
 
 import java.sql.Connection;
@@ -13,11 +14,12 @@ import java.util.Scanner;
 
 public class PositionFunction {
 
-    private  static Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = new Scanner(System.in);
 
     private PositionController positionController = new PositionController();
+
     public void run() throws ClassNotFoundException, SQLException {
-        while (true){
+        while (true) {
             System.out.println("=== mời bạn chọn chức năng ===");
             System.out.println("1.xem ds chức vụ ");
             System.out.println("2.them mới chức vụ");
@@ -33,18 +35,15 @@ public class PositionFunction {
                     this.showPosition(positions);
                     break;
                 case "2":
-                    this.insert();
+                    this.insertPosition();
                     break;
                 case "3":
-                    this.updatePosition();
-                    break;
-                case "4":
                     this.deletePosition();
                     break;
-                case "5":
-                    this.findByName();
+                case "4":
+                    this.updatePosition();
                     break;
-                case "6":
+                case "5":
                     return;
                 default:
                     System.out.println("Chọn sai, chọn lại!");
@@ -53,7 +52,7 @@ public class PositionFunction {
         }
     }
 
-    public  void showPosition(List<Position> positions) {
+    public void showPosition(List<Position> positions) {
         System.out.println("+-----+--------------------+");
         System.out.printf("|%5s|%20s|\n", "ID", "Tên chức vụ");
         System.out.println("+-----+--------------------+");
@@ -66,51 +65,71 @@ public class PositionFunction {
         System.out.println("+-----+--------------------+");
     }
 
-    public  void insert() {
+    public void insertPosition() {
+        System.out.println("Nhập tên chức vụ: 1.DEV     2.TEST      3.SCRUM_MASTER      4.PM");
+        String choice = scanner.nextLine();
+        PositionName name;
+        switch (choice) {
+            case "1":
+                name = PositionName.DEV;
+                break;
+            case "2":
+                name = PositionName.TEST;
+                break;
+            case "3":
+                name = PositionName.SCRUM_MASTER;
+                break;
+            default:
+                name = PositionName.PM;
 
-        System.out.println("nhập tên chức vụ: ");
-        String name = scanner.nextLine();
-        boolean check = positionController.insert(name);
-        if (check){
-            System.out.println("thêm mới thành công");
+        }
+        boolean check = positionController.insert(String.valueOf(name));
+        if (check) {
+            System.out.println("Thêm mới thành công");
         } else {
-            System.out.println("thêm không thành công");
+            System.out.println("Thêm mới thất bại");
         }
     }
 
-    public  void deletePosition() {
-
-        System.out.println("nhập id chức vụ: ");
-        int id = scanner.nextInt();
-        boolean check = positionController.deletePosition(id);
-        if (check){
-            System.out.println("xóa thành công");
-        } else {
-            System.out.println("xóa không thành công");
-        }
-    }
-
-    public  void updatePosition()  {
-        System.out.println("Nhập ID  chức vụ cần sửa: ");
+    public void deletePosition() {
+        System.out.println("Nhập ID chức vụ muốn xóa: ");
         int id = scanner.nextInt();
         scanner.nextLine();
+        boolean check = positionController.deletePosition(id);
+        if (check) {
+            System.out.println("Xóa thành công");
+        } else {
+            System.out.println("Xóa thất bại");
+        }
+    }
 
-        System.out.println("Nhập tên chức vụ cần sửa: ");
-        String name = scanner.nextLine();
-        boolean check = positionController.updatePosition(id, name);
+    public void updatePosition() {
+        System.out.println("Nhập tên ID chức vụ cần sửa: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Nhập tên chức vụ: 1.DEV     2.TEST      3.SCRUM_MASTER      4.PM");
+        String choice = scanner.nextLine();
+        PositionName name;
+        switch (choice) {
+            case "1":
+                name = PositionName.DEV;
+                break;
+            case "2":
+                name = PositionName.TEST;
+                break;
+            case "3":
+                name = PositionName.SCRUM_MASTER;
+                break;
+            default:
+                name = PositionName.PM;
+
+        }
+
+        boolean check = positionController.updatePosition(id, String.valueOf(name));
         if (check) {
             System.out.println("Update thành công");
         } else {
-            System.out.println("Update không thành công");
+            System.out.println("Update thất bại");
         }
     }
-
-    public  void findByName() throws ClassNotFoundException, SQLException {
-        System.out.print("Nhập tên chuc vụ tìm kiếm: ");
-        String name = scanner.nextLine();
-        List<Position> positions = positionController.findByName(name);
-        showPosition(positions);
-    }
-
-
 }
