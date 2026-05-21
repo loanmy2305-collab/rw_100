@@ -22,8 +22,10 @@ public class JDBCUtils {
             return null;
     }
     //close cho 3 interface connection, statement, rs
-    public static void closeConnection(Connection connection, Statement statement, ResultSet rs) throws ClassNotFoundException, SQLException {
+    public static void closeConnection(Connection connection, Statement statement, ResultSet rs)  {
         // ếu cái nào có sưz liệu (đang mở) != null
+        try {
+
         if(connection != null) {
             connection.close();
         }
@@ -33,5 +35,8 @@ public class JDBCUtils {
         if(rs != null){
             rs.close();
         }
-    }
+    }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        }
 }

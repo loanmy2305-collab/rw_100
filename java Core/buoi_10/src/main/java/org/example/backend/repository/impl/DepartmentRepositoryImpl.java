@@ -16,14 +16,17 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
     @Override
     public List<Department> findAll() { // lấy ra ds department
         List<Department> departments = new ArrayList<>();// lưu lại dữ liệu lấy từ DB
+        Connection connection =  null;
+        Statement statement =  null;
+        ResultSet rs =  null;
         try {
             // b1: kết nối đến DB
 
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "select * from department;";
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sql);// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            statement = connection.createStatement();
+            rs = statement.executeQuery(sql);// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
             while (rs.next()) {// lặp qua qua từng dòng của rs
                 int id = rs.getInt("department_id");// lấy giá trị từ cloumn department_id
                 String name = rs.getString("department_name");//lấy giá trị từ cloumn department_name
@@ -33,18 +36,23 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
             JDBCUtils.closeConnection(connection, statement, rs);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, rs);
         }
         return departments;
     }
 
     @Override
     public boolean insert(String name) {
+        Connection connection =  null;
+        PreparedStatement statement =  null;
+
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "insert into department (department_name) values (?)";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            statement = connection.prepareStatement(sql);
             statement.setString(1, name);
             // thực thi câu sql
             int c = statement.executeUpdate();// trả ra sô row thay đổi trong DB
@@ -59,19 +67,24 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtils.closeConnection(connection,statement,null);
         }
         return false;
     }
 
     @Override
     public boolean delete(int id) {
+        Connection connection =  null;
+        PreparedStatement statement =  null;
+
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: xóa theo thên phòng ban
             String sql = "delete from department\n" +
                     "where department_id like ?;";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             // thực thi câu sql
             int c = statement.executeUpdate();// trả ra sô row thay đổi trong DB
@@ -86,18 +99,24 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, null);
+
         }
         return false;
     }
 
     @Override
     public boolean update(int id, String updateName) {
+        Connection connection =  null;
+        PreparedStatement statement =  null;
+
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: xóa theo thên phòng ban
             String sql = "update department set department_name = ? where department_id = ?;";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            statement = connection.prepareStatement(sql);
             statement.setString(1, updateName);
             statement.setInt(2, id);
             // thực thi câu sql
@@ -113,23 +132,29 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, null);
+
         }
         return false;
     }
 
     @Override
     public boolean checkExistID(Integer id) {
+        Connection connection =  null;
+        PreparedStatement preparedStatement =  null;
+        ResultSet rs =  null;
         boolean check = false;
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "select * from department where department_id = ? ";
 
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
 
-            ResultSet rs = preparedStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            rs = preparedStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
             if (rs.next()) {// lặp qua qua từng dòng của rs
                 check = true;
             }
@@ -137,6 +162,9 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
             JDBCUtils.closeConnection(connection, preparedStatement, rs);
         } catch (Exception e) {// show các lỗi lien quan đén logic xử lý
             e.printStackTrace();// show ra exception
+        } finally {
+            JDBCUtils.closeConnection(connection, preparedStatement, rs);
+
         }
         return check;
     }
@@ -144,21 +172,24 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
     @Override
     public boolean checkExistNameAndIdNot(String name, Integer id) {
         boolean check = false;
+        Connection connection =  null;
+        PreparedStatement preparedStatement =  null;
+        ResultSet rs =  null;
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "select * from department where department_name like ? ";
             if (Objects.nonNull(id)) {// check update
                 sql += "and department_id != ? ";
             }
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, name);
             if (Objects.nonNull(id)) {// check update
                 preparedStatement.setInt(2, id);
             }
 
-            ResultSet rs = preparedStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            rs = preparedStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
             if (rs.next()) {// lặp qua qua từng dòng của rs
                 check = true;
             }
@@ -166,6 +197,9 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
             JDBCUtils.closeConnection(connection, preparedStatement, rs);
         } catch (Exception e) {// show các lỗi lien quan đén logic xử lý
             e.printStackTrace();// show ra exception
+        } finally {
+            JDBCUtils.closeConnection(connection, preparedStatement, rs);
+
         }
         return check;
     }

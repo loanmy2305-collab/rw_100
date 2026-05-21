@@ -1,17 +1,21 @@
 package org.example.frontend;
 
 import org.example.backend.controller.AccountController;
+import org.example.backend.controller.DepartmentController;
+import org.example.backend.controller.PositionController;
 import org.example.entity.Account;
 import org.example.entity.Department;
 import org.example.entity.Position;
+import org.example.utils.ScannerUtils;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class AccountFunction {
-    private static Scanner scanner = new Scanner(System.in);
-    //khởi tạo đối tượng controller
     private AccountController accountController = new AccountController();
+    private DepartmentController departmentController = new DepartmentController();
+    private PositionController positionController = new PositionController();
+    private static Scanner scanner = new Scanner(System.in);
 
     public  void run() throws ClassNotFoundException {
         while (true) {
@@ -37,7 +41,7 @@ public class AccountFunction {
                     this.deleteAccount();
                     break;
                 case "4":
-                    this.update();
+                    this.updateAccount();
                     break;
                 case "5":
                     this.findByIdAndName();
@@ -65,195 +69,153 @@ public class AccountFunction {
     }
 
 
-    public  void insertAccount()  {
+    public void insertAccount() {
+        String fullName;
         String username;
-        while (true) {
-            System.out.print("Username: ");
-            username = scanner.nextLine();
-
-            // null hoặc rỗng
-            if (username == null || username.trim().isEmpty()) {
-                System.out.println("Username không được để trống!");
-                continue;
-            }
-
-            // unique
-            if (accountController.checkExistUsernameAndIdNot(username, null)) {
-                System.out.println("Username đã tồn tại!");
-                continue;
-            }
-            break;
-        }
-
-        String fullname;
-        while (true) {
-            System.out.print("Fullname: ");
-            fullname = scanner.nextLine();
-            if (fullname == null || fullname.trim().isEmpty()) {
-                System.out.println("Fullname không được để trống!");
-                continue;
-            }
-            break;
-        }
-
         String email;
 
+        System.out.println("Nhập email: ");
         while (true) {
-            System.out.print("Email: ");
-            email = scanner.nextLine();
-            if (email == null || email.trim().isEmpty()) {
-                System.out.println("Email không được để trống!");
-                continue;
-            }
-
-            // check @
-            if (!email.contains("@")) {
-                System.out.println("Email phải chứa @");
-                continue;
-            }
-
-            // unique
-            if (accountController.checkExistEmailAndIdNot(email, null)) {
-                System.out.println("Email đã tồn tại!");
+            email = ScannerUtils.inputEmail();
+            // check trung
+            if (accountController.checkEmailExist(email)) {
+                System.out.println("email đã tồn tại. Nhập lại:");
                 continue;
             }
             break;
         }
 
-        int depId;
-
+        // validation username
+        System.out.println("Nhập username: ");
         while (true) {
-            System.out.print("Department ID: ");
-            depId = Integer.parseInt(scanner.nextLine());
-            if (depId <= 0) {
-                System.out.println("Department ID phải > 0");
-                continue;
-            }
-            if (!accountController.checkExistDepartmentID(depId)) {
-                System.out.println("Department không tồn tại!");
+            username = ScannerUtils.inputString();
+            // check trung
+            if (accountController.checkUsernameExist(username, null)) {
+                System.out.println("Username đã tồn tại. Nhập lại:");
                 continue;
             }
             break;
         }
 
-        int posId;
+        // validation fullName
+        System.out.println("Nhập fullName: ");
+        fullName = ScannerUtils.inputString();
+
+        System.out.println("Chọn ID department: ");
+        List<Department> departments = departmentController.findAll();
+        Integer depID;
         while (true) {
-            System.out.print("Position ID: ");
-            posId = Integer.parseInt(
-                    scanner.nextLine());
-            if (posId <= 0) {
-                System.out.println("Position ID phải > 0");
-                continue;
+            for (Department department : departments) {
+                System.out.println("ID: " + department.getId() + ", DepartmentName: " + department.getName());
             }
-            if (!accountController.checkExistPositionID(posId)) {
-                System.out.println("Position không tồn tại!");
-                continue;
+            depID = ScannerUtils.inputIntGreaterThenZero();
+            // check departmentID có tồn tại ko
+            boolean checkExists = departmentController.checkExistID(depID);//Integer.valueOf("abc")
+            if (!checkExists) {
+                System.out.println("Không ton tại deparmentID này:");
+
+            } else {
+                break;
             }
-            break;
         }
-        Account acc = new Account();
 
-        acc.setUsername(username);
-        acc.setFullName(fullname);
-        acc.setEmail(email);
+        System.out.println("Chọn ID position: ");
+        List<Position> positions = positionController.findAll();
+        Integer poID;
+        while (true) {
+            for (Position position : positions) {
+                System.out.println("ID: " + position.getId() + ", PositionName: " + position.getName());
+            }
 
-        Department dep = new Department();
-        dep.setId(depId);
-
-        acc.setDepartment(dep);
-
-        Position pos = new Position();
-        pos.setId(posId);
-
-        acc.setPosition(pos);
-
-        acc.setCreateDate(java.time.LocalDate.now());
-
-        boolean check = accountController.insert(acc);
-
+            poID = ScannerUtils.inputIntGreaterThenZero();
+            // check positionID có tồn tại ko
+            boolean checkExists = checkExistPosition(positions, String.valueOf(poID));//Integer.valueOf("abc")
+            if (!checkExists) {
+                System.out.println("Không ton tại positionID này:");
+            } else {
+                break;
+            }
+        }
+        boolean check = accountController.insert(email, username, fullName, depID, poID);
         if (check) {
-            System.out.println("Thêm thành công!");
+            System.out.println("Thêm mới thành công");
         } else {
-            System.out.println("Thêm thất bại!");
+            System.out.println("Thêm mới thất bại");
         }
     }
 
-    public  void deleteAccount()  {
 
-        System.out.print("Nhập ID cần xóa: ");
+    public void deleteAccount() {
         int id;
-
+        System.out.println("Nhập ID cần xóa: ");
         while (true) {
-            id = Integer.parseInt(scanner.nextLine());
-
-            // > 0
-            if (id <= 0) {
-                System.out.println("ID phải > 0");
-                continue;
+            id = ScannerUtils.inputIntGreaterThenZero();
+            // kiem tra xem id nay co ton tai ko
+            if (!accountController.checkIdExist(id)) {
+                System.out.println(" ID này không ton tai. Nhap lai: ");
+            } else {
+                break;
             }
-
-            // tồn tại
-            if (!accountController.checkExistID(id)) {
-                System.out.println("ID không tồn tại!");
-                continue;
-            }
-            break;
         }
 
         boolean check = accountController.deleteAccount(id);
         if (check) {
-            System.out.println("Xóa thành công!");
+            System.out.println("Xóa thành công");
         } else {
-            System.out.println("Xóa thất bại!");
+            System.out.println("Xóa thất bại");
         }
     }
 
-    public  void update() {
 
-        int id;
+    public void updateAccount() {
+        Integer id;
+        String username;
+        System.out.println("Nhập ID cần sửa: ");
         while (true) {
-            System.out.print("Nhập ID cần sửa: ");
-            id = Integer.parseInt(scanner.nextLine());
-
-            // > 0
-            if (id <= 0) {
-                System.out.println("ID phải > 0");
-                continue;
+            id = ScannerUtils.inputIntGreaterThenZero();
+            // kiem tra xem id nay co ton tai ko
+            if (!accountController.checkIdExist(id)) {
+                System.out.println(" ID này không ton tai. Nhap lai: ");
+            } else {
+                break;
             }
+        }
 
-            // tồn tại
-            if (!accountController.checkExistID(id)) {
-                System.out.println("ID không tồn tại!");
+        System.out.println("Nhập username: ");
+        while (true) {
+            username = ScannerUtils.inputString();
+            // check trung
+            if (accountController.checkUsernameExist(username, id)) {
+                System.out.println("Username đã tồn tại. Nhập lại:");
                 continue;
             }
             break;
         }
 
-        String newUsername;
-
-        while (true) {
-            System.out.print("Username mới: ");
-
-            newUsername = scanner.nextLine();
-
-            if (newUsername == null || newUsername.trim().isEmpty()) {
-                System.out.println("Username không được để trống!");
-                continue;
-            }
-
-            // unique
-            if (accountController.checkExistUsernameAndIdNot(newUsername, id)) {
-                System.out.println("Username đã tồn tại!");
-                continue;
-            }
-            break;
-        }
-        boolean check = accountController.updateUsername(id, newUsername);
+        boolean check = accountController.update(id, username);
         if (check) {
-            System.out.println("Update thành công!");
+            System.out.println("Update thành công");
         } else {
-            System.out.println("Update thất bại!");
+            System.out.println("Update thất bại");
         }
+    }
+
+    public boolean checkExistDepartment(List<Department> departments, String id) {
+        for (Department department : departments) {
+            if (id.equals(String.valueOf(department.getId()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkExistPosition(List<Position> positions, String id) {
+        for (Position position : positions) {
+            if (id.equals(String.valueOf(position.getId()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -265,5 +227,5 @@ public class AccountFunction {
         showAccount(accounts);
     }
 
-    
+
 }

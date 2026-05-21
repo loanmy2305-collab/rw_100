@@ -18,14 +18,17 @@ public class PositionRepositoryImpl implements IPositionRepository {
     @Override
     public List<Position> findAll() {
         List<Position> positions = new ArrayList<>();
+        Connection connection = null;
+        Statement statement =  null;
+        ResultSet rs =  null;
 
         try {
             //b1 kết nốt Pos
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             //b2:
             String sql = "select * from Position;";
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
+            statement = connection.createStatement();
+            rs = statement.executeQuery(sql);
             while (rs.next()) {
                 int id = rs.getInt("position_id");
                 String name = rs.getString("position_name");
@@ -37,17 +40,22 @@ public class PositionRepositoryImpl implements IPositionRepository {
         } catch (Exception e) {
             e.printStackTrace();
 
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, rs);
         }
         return positions;
     }
 
     @Override
     public boolean insert(String name) {
+        Connection connection = null;
+        PreparedStatement statement =  null;
+
         try {
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
 
             String sql = "insert into position (position_name) values (?); ";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            statement = connection.prepareStatement(sql);
 
             statement.setString(1, name);
 
@@ -57,6 +65,8 @@ public class PositionRepositoryImpl implements IPositionRepository {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, null);
         }
         return false;
 
@@ -64,11 +74,14 @@ public class PositionRepositoryImpl implements IPositionRepository {
 
     @Override
     public boolean deletePosition(int id) {
+        Connection connection = null;
+        PreparedStatement statement =  null;
+
         try {
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
 
             String sql = "delete from position where account_id = ?;\n";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
 
 
@@ -78,17 +91,21 @@ public class PositionRepositoryImpl implements IPositionRepository {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, null);
         }
         return false;
     }
 
     @Override
     public boolean updatePosition(int id, String updateName) {
+        Connection connection = null;
+        PreparedStatement statement =  null;
         try {
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
 
             String sql = "update position set position_name = ? where position_id = ? ";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             statement.setString(2, updateName);
 
@@ -99,6 +116,8 @@ public class PositionRepositoryImpl implements IPositionRepository {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, null);
         }
         return false;
     }
@@ -106,16 +125,19 @@ public class PositionRepositoryImpl implements IPositionRepository {
     @Override
     public List<Position> findByName(String searchName) {
         List<Position> positions = new ArrayList<>();// lưu lại dữ liệu lấy từ DB
+        Connection connection = null;
+        PreparedStatement prepareStatement =  null;
+        ResultSet rs = null;
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng position
             String sql = "select * from position where position_name like ?;";
-            PreparedStatement prepareStatement = connection.prepareStatement(sql);
+            prepareStatement = connection.prepareStatement(sql);
             // set gia trị cho từng dấu ?
             prepareStatement.setString(1, searchName);
 
-            ResultSet rs = prepareStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            rs = prepareStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
 
             while (rs.next()) {// lặp qua qua từng dòng của rs
                 int id = rs.getInt("position_id");// lấy giá trị từ column position_id
@@ -127,6 +149,8 @@ public class PositionRepositoryImpl implements IPositionRepository {
             JDBCUtils.closeConnection(connection, prepareStatement, rs);
         } catch (Exception e) {// show các lỗi lien quan đén logic xử lý
             e.printStackTrace();// show ra exception
+        } finally {
+            JDBCUtils.closeConnection(connection, prepareStatement, rs);
         }
         return positions;
     }
@@ -134,23 +158,28 @@ public class PositionRepositoryImpl implements IPositionRepository {
     @Override
     public boolean checkExistID(Integer id) {
         boolean check = false;
+        Connection connection = null;
+        PreparedStatement prepareStatement =  null;
+        ResultSet rs = null;
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "select * from position where position_id = ? ";
 
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            prepareStatement = connection.prepareStatement(sql);
+            prepareStatement.setInt(1, id);
 
-            ResultSet rs = preparedStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            rs = prepareStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
             if (rs.next()) {// lặp qua qua từng dòng của rs
                 check = true;
             }
             // đóng các kết nối
-            JDBCUtils.closeConnection(connection, preparedStatement, rs);
+            JDBCUtils.closeConnection(connection, prepareStatement, rs);
         } catch (Exception e) {// show các lỗi lien quan đén logic xử lý
             e.printStackTrace();// show ra exception
+        } finally {
+            JDBCUtils.closeConnection(connection, prepareStatement, rs);
         }
         return check;
     }
@@ -158,22 +187,25 @@ public class PositionRepositoryImpl implements IPositionRepository {
     @Override
     public boolean checkExistNameAndIdNot(String name, Integer id) {
         boolean check = false;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
         try {
             // b1: kết nối đến DB
-            Connection connection = JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
             String sql = "select * from position where position_name like ?";
 
             if (Objects.nonNull(id)) {// check update
                 sql += "and department_id != ? ";
             }
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, name);
             if (Objects.nonNull(id)) {// check update
                 preparedStatement.setInt(2, id);
             }
 
-            ResultSet rs = preparedStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            rs = preparedStatement.executeQuery();// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
             if (rs.next()) {// lặp qua qua từng dòng của rs
                 check = true;
             }
@@ -181,6 +213,8 @@ public class PositionRepositoryImpl implements IPositionRepository {
             JDBCUtils.closeConnection(connection, preparedStatement, rs);
         } catch (Exception e) {// show các lỗi lien quan đén logic xử lý
             e.printStackTrace();// show ra exception
+        } finally {
+            JDBCUtils.closeConnection(connection, preparedStatement, rs);
         }
         return check;
     }

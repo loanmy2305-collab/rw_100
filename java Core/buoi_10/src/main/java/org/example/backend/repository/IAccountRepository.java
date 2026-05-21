@@ -3,6 +3,7 @@ package org.example.backend.repository;
 import org.example.entity.Account;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IAccountRepository {
     List<Account> findAll();
@@ -11,12 +12,13 @@ public interface IAccountRepository {
     boolean update(int id, int updateDepId, int updatePosId);
     List<Account> findByIdAndName(String searchfullName, String searchusername);
     List<Account> findByName(String name);
-    boolean checkExistUsernameAndIdNot(String username, Integer id);
-    boolean checkExistEmailAndIdNot(String email, Integer id);
-    boolean checkExistPositionID(int posId);
-    boolean checkExistID(int id);
-    boolean checkExistDepartmentID(int depId);
-    boolean updateUsername(int id, String newUsername);
+    Map<String, Account> mapAccountByUsername();
 
-    boolean insert(Account acc);
+    boolean checkUsernameExist(String username, Integer id);
+
+    boolean checkEmailExist(String email);
+
+    boolean checkIdExist(Integer id);
+
+    boolean update(int id, String updateName);
 }

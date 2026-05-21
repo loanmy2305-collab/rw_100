@@ -6,6 +6,7 @@ import org.example.backend.service.IAccountService;
 import org.example.entity.Account;
 
 import java.util.List;
+import java.util.Map;
 
 public class AccountServiceImpl implements IAccountService {
     private IAccountRepository accountRepository = new AccountRepositoryImpl();
@@ -46,46 +47,32 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public boolean checkExistUsernameAndIdNot(String username, Integer id) {
-        boolean check = accountRepository.checkExistUsernameAndIdNot(username, id);
-        return check;
+    public Map<String, Account> mapAccountByUsername() {
+        return accountRepository.mapAccountByUsername();
     }
 
     @Override
-    public boolean checkExistEmailAndIdNot(String email, Integer id) {
-        boolean check = accountRepository.checkExistEmailAndIdNot(email, id);
-        return check;
+    public boolean checkUsernameExist(String username, Integer id) {
+        return accountRepository.checkUsernameExist(username, id);
     }
 
     @Override
-    public boolean checkExistPositionID(int posId) {
-        boolean check = accountRepository.checkExistPositionID(posId);
-        return check;
+    public boolean checkEmailExist(String email) {
+        return accountRepository.checkEmailExist(email);
     }
 
     @Override
-    public boolean checkExistID(int id) {
-        boolean check = accountRepository.checkExistID(id);
-        return check;
+    public boolean checkIdExist(Integer id) {
+        return accountRepository.checkIdExist(id);
+
     }
 
     @Override
-    public boolean checkExistDepartmentID(int depId) {
-        boolean check = accountRepository.checkExistDepartmentID(depId);
-        return check;
+    public boolean update(int id, String updateName) {
+        return accountRepository.update(id, updateName);
     }
 
-    @Override
-    public boolean updateUsername(int id, String newUsername) {
-        boolean check = accountRepository.updateUsername(id, newUsername);
-        return check;
-    }
 
-    @Override
-    public boolean insert(Account acc) {
-        boolean check = accountRepository.insert(acc);
-        return check;
-    }
 
 
 }

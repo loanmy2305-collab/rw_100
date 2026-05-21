@@ -5,6 +5,8 @@ import org.example.backend.service.impl.AccountServiceImpl;
 import org.example.entity.Account;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map;
 
 public class AccountController {
     private IAccountService accountService = new AccountServiceImpl();
@@ -39,38 +41,23 @@ public class AccountController {
     }
 
 
-    public boolean checkExistUsernameAndIdNot(String username, Integer id) {
-        boolean check = accountService.checkExistUsernameAndIdNot(username,id);
-        return check;
+    public Map<String, Account> mapAccountByUsername() {
+        return accountService.mapAccountByUsername();
     }
 
-    public boolean checkExistEmailAndIdNot(String email, Integer id) {
-        boolean check = accountService.checkExistEmailAndIdNot(email,id);
-        return check;
+    public boolean checkUsernameExist(String username, Integer id) {
+        return accountService.checkUsernameExist(username, id);
     }
 
-    public boolean checkExistPositionID(int posId) {
-        boolean check = accountService.checkExistPositionID(posId);
-        return check;
+    public boolean checkEmailExist(String email) {
+        return accountService.checkEmailExist(email);
     }
 
-    public boolean checkExistID(int id) {
-        boolean check = accountService.checkExistID(id);
-        return check;
+    public boolean checkIdExist(Integer id) {
+        return accountService.checkIdExist(id);
     }
 
-    public boolean checkExistDepartmentID(int depId) {
-        boolean check = accountService.checkExistDepartmentID(depId);
-        return check;
-    }
-
-    public boolean updateUsername(int id, String newUsername) {
-        boolean check = accountService.updateUsername(id, newUsername);
-        return check;
-    }
-
-    public boolean insert(Account acc) {
-        boolean check = accountService.insert(acc);
-        return check;
+    public boolean update(int id, String updateName) {
+        return accountService.update(id, updateName);
     }
 }
