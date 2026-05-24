@@ -19,8 +19,7 @@ import java.util.Map;
 
 public class AccountServiceImpl implements IAccountService {
     private IAccountRepository accountRepository = new AccountRepositoryImpl();
-//    private IDepartmentRepository departmentRepository = new DepartmentRepositoryImpl();
-//    private IPositionRepository positionRepository = new PositionRepositoryImpl();
+
 
     @Override
     public List<Account> findAll() {
