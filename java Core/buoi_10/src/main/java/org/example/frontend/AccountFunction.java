@@ -17,7 +17,7 @@ public class AccountFunction {
     private PositionController positionController = new PositionController();
     private static Scanner scanner = new Scanner(System.in);
 
-    public  void run() throws ClassNotFoundException {
+    public  void run()  {
         while (true) {
             System.out.println("=== mời bạn chọn chức năng ===");
             System.out.println("1.xem ds tài khoan");
@@ -26,7 +26,8 @@ public class AccountFunction {
             System.out.println("4.xóa tài khoan");
             System.out.println("5.tìm kiếm chức vụ theo tên");
             System.out.println("6.tìm kiếm chức vụ theo tên và username");
-            System.out.println("7.thoát");
+            System.out.println("7. Import file CSV ");
+            System.out.println("8.thoát");
 
             String choice = scanner.nextLine();
             switch (choice) {
@@ -47,7 +48,11 @@ public class AccountFunction {
                     this.findByIdAndName();
                     break;
                 case "6":
+                    this.importAccountFromCSV();
+                    break;
+                case "7":
                     return;
+
                 default:
                     System.out.println("Chọn sai, chọn lại!");
 
@@ -55,12 +60,23 @@ public class AccountFunction {
         }
     }
 
+    private void importAccountFromCSV() {
+        System.out.println("===Import file CSV");
+        System.out.println("Mời bạn nhập đường dẫn đến file:");
+        //C:\Users\LOAN\Documents\rw_100\csv\input_account.csv
+        String pathName = scanner.nextLine();
+        String message = accountController.importAccountFromCSV(pathName);
+        System.out.println(message);
+
+    }
+
+
     public  void showAccount(List<Account> accounts) {
         System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
         System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", "ID", "FullName", "Email", "Username", "Tên", "Tên chức vụ");
         System.out.println("+-----+--------------------+--------------------+--------------------+--------------------+--------------------+");
         for (Account account : accounts) {
-            System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", account.getId(), account.getFullName(), account.getEmail(), account.getUsername(), account.getDepartment().getName(), account.getPosition().getName().name());
+            System.out.printf("|%5s|%20s|%20s|%20s|%20s|%20s|\n", account.getId(), account.getFullName(), account.getEmail(), account.getUsername(), account.getDepartment(), account.getPosition());
         }
         if (accounts.isEmpty()) {
             System.out.println("Không tìm thấy");

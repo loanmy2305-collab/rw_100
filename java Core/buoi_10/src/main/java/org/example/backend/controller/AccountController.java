@@ -60,4 +60,8 @@ public class AccountController {
     public boolean update(int id, String updateName) {
         return accountService.update(id, updateName);
     }
+
+    public String importAccountFromCSV(String pathName) {
+        return accountService.importAccountFromCSV(pathName);
+    }
 }

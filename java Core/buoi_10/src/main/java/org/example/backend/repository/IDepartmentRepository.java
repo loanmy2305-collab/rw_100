@@ -11,5 +11,6 @@ public interface IDepartmentRepository {
     boolean update(int id, String updateName);
     boolean checkExistID(Integer id);
     boolean checkExistNameAndIdNot(String name, Integer id);
+    boolean createListDepartment(List<Department> list);
 }
 

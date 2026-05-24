@@ -12,15 +12,17 @@ public class DepartmentFunction {
     //khởi tạo đối tượng controller
     private DepartmentController departmentController = new DepartmentController();
 
-    public  void run() throws ClassNotFoundException {
+    public void run() {
         while (true) {
-            System.out.println("=== mời bạn chọn chức năng ===");
-            System.out.println("1.xem ds phòng ban");
-            System.out.println("2.them mới phòng ban");
-            System.out.println("3.update phòng ban");
-            System.out.println("4.xóa phòng ban");
-            System.out.println("5.tìm kiếm phòng ban");
-            System.out.println("6.thoát");
+            System.out.println("=== Mời bạn chọn chức năng ===");
+            System.out.println("1. Xem ds phòng ban");
+            System.out.println("2. Thêm mới phòng ban");
+            System.out.println("3. Update phòng ban");
+            System.out.println("4. Xóa phòng ban");
+            System.out.println("5. Tìm kiếm phòng ban");
+            System.out.println("6. Import file CSV");
+            System.out.println("7. Thoát");
+
 
             String choice = scanner.nextLine();
             switch (choice) {
@@ -38,12 +40,25 @@ public class DepartmentFunction {
                 case "4":
                     this.deleteDepartment();
                     break;
+                case "5":
+                    this.importDepartmentFromCSV();
+                    break;
                 default:
                     System.out.println("Chọn sai, chọn lại!");
             }
         }
     }
 
+    // đóng dữ liệu từ file CSV và lưu vào DB
+    public  void  importDepartmentFromCSV(){
+        System.out.println("===Import file CSV");
+        System.out.println("Mời bạn nhập đường dẫn đến file:");
+  //C:\Users\LOAN\Documents\rw_100\csv\input_department.csv
+        String pathName = scanner.nextLine();
+        String message = departmentController.importDepartmentFromCSV(pathName);
+        System.out.println(message);
+
+    }
     public void deleteDepartment() {
         System.out.println("Nhập ID phòng ban cần xóa: ");
         int id;

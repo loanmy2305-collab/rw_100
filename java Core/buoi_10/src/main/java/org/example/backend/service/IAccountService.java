@@ -21,4 +21,6 @@ public interface IAccountService {
     boolean checkIdExist(Integer id);
 
     boolean update(int id, String updateName);
+
+    String importAccountFromCSV(String pathName);
 }

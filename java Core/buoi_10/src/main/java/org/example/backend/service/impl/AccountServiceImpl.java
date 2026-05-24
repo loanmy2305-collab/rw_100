@@ -1,15 +1,27 @@
 package org.example.backend.service.impl;
 
 import org.example.backend.repository.IAccountRepository;
+import org.example.backend.repository.IDepartmentRepository;
+import org.example.backend.repository.IPositionRepository;
 import org.example.backend.repository.impl.AccountRepositoryImpl;
+import org.example.backend.repository.impl.DepartmentRepositoryImpl;
+import org.example.backend.repository.impl.PositionRepositoryImpl;
 import org.example.backend.service.IAccountService;
 import org.example.entity.Account;
+import org.example.entity.Department;
+import org.example.entity.Position;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class AccountServiceImpl implements IAccountService {
     private IAccountRepository accountRepository = new AccountRepositoryImpl();
+//    private IDepartmentRepository departmentRepository = new DepartmentRepositoryImpl();
+//    private IPositionRepository positionRepository = new PositionRepositoryImpl();
+
     @Override
     public List<Account> findAll() {
         List<Account> accounts = accountRepository.findAll();
@@ -72,7 +84,60 @@ public class AccountServiceImpl implements IAccountService {
         return accountRepository.update(id, updateName);
     }
 
+    @Override
+    public String importAccountFromCSV(String pathName) {
+        // dọc dữ liệu từ file và dưa dữ lệu cho repository để lưu vào DB
+        if (!pathName.endsWith(".csv")) {
+            return "dịnh dạng file không đuúng";
+        }
+//        // FileReader:là 1 đói tượng dùngdể đọc file ,đọc từng kí tự
+//        // BuferrdReader: hỗ trợ đọc theo từng dòng
 
+        List<Account> accounts = new ArrayList<>();
+        boolean firstLine = true;
+        boolean checkCreate = false;
+        String header = "";
+        int accountID = 0;
+//        List<Department> departments = departmentRepository.findAll();// kiem tra xem departmentID import vao co ton tai hay ko
+//        List<Position> positions = positionRepository.findAll();
+        try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
+            header = br.readLine();// bo di dong header
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] fields = line.split(",");
+                String username = fields[0];
+                String fullName = fields[1];
+                String email = fields[2];
+                String departmentId = fields[3];
+                String positionId = fields[4];
+
+//                Department department = null;
+//                for (Department de : departments) {
+//                    if (de.getId() == Integer.parseInt(departmentId)) {
+//                        department = de;
+//                        break;
+//                    }
+//                }
+//
+//                Position position = null;
+//                for (Position po : positions) {
+//                    if (po.getId() == Integer.parseInt(positionId)) {
+//                        position = po;
+//                        break;
+//                    }
+//                }
+                Account account = new Account(username, fullName, email, departmentId, positionId);
+                accounts.add(account);
+            }
+            if (!accounts.isEmpty()) {
+                checkCreate = accountRepository.createListAccount(accounts);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "Import thành công";
+    }
 
 
 }

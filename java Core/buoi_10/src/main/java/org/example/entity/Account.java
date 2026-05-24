@@ -47,6 +47,9 @@ public class Account {
     public Account(Integer id, String userName, String fullName, String email, Department department, Position position, LocalDate createDate) {
     }
 
+    public Account(String username, String fullName, String email, String departmentId, String positionId) {
+    }
+
     public int getId() {
         return id;
     }

@@ -14,7 +14,7 @@ public class PositionFunction {
 
     private PositionController positionController = new PositionController();
 
-    public void run() throws ClassNotFoundException, SQLException {
+    public void run()  {
         while (true) {
             System.out.println("=== mời bạn chọn chức năng ===");
             System.out.println("1.xem ds chức vụ ");

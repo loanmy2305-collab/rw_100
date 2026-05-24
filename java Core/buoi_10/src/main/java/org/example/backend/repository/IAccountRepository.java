@@ -1,6 +1,7 @@
 package org.example.backend.repository;
 
 import org.example.entity.Account;
+import org.example.entity.Department;
 
 import java.util.List;
 import java.util.Map;
@@ -21,4 +22,8 @@ public interface IAccountRepository {
     boolean checkIdExist(Integer id);
 
     boolean update(int id, String updateName);
+    boolean createListAccount(List<Account> accounts);
+
+
 }
+

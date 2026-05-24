@@ -38,4 +38,8 @@ public class DepartmentController {
     public boolean checkExistID(Integer id) {
         return departmentService.checkExistID(id);
     }
+
+    public String importDepartmentFromCSV(String pathName) {
+        return departmentService.importDepartmentFromCSV(pathName);
+    }
 }

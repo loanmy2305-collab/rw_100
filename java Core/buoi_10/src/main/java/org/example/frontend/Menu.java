@@ -1,12 +1,11 @@
 package org.example.frontend;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Menu {
     private Scanner sc = new Scanner(System.in);
 
-    public void run() throws ClassNotFoundException, SQLException {
+    public void run()  {
         while (true) {
             System.out.println("=== Mời bạn chọn chức năng ===");
             System.out.println("1. Làm việc với department");
