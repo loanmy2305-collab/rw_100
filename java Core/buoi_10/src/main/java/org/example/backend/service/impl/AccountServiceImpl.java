@@ -98,8 +98,7 @@ public class AccountServiceImpl implements IAccountService {
         boolean checkCreate = false;
         String header = "";
         int accountID = 0;
-//        List<Department> departments = departmentRepository.findAll();// kiem tra xem departmentID import vao co ton tai hay ko
-//        List<Position> positions = positionRepository.findAll();
+
         try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
             header = br.readLine();// bo di dong header
             String line;
@@ -111,21 +110,7 @@ public class AccountServiceImpl implements IAccountService {
                 String departmentId = fields[3];
                 String positionId = fields[4];
 
-//                Department department = null;
-//                for (Department de : departments) {
-//                    if (de.getId() == Integer.parseInt(departmentId)) {
-//                        department = de;
-//                        break;
-//                    }
-//                }
-//
-//                Position position = null;
-//                for (Position po : positions) {
-//                    if (po.getId() == Integer.parseInt(positionId)) {
-//                        position = po;
-//                        break;
-//                    }
-//                }
+
                 Account account = new Account(username, fullName, email, departmentId, positionId);
                 accounts.add(account);
             }
