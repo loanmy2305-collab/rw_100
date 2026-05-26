@@ -23,6 +23,7 @@ public class AccountServiceImpl implements IAccountService {
     private IDepartmentRepository departmentRepository = new DepartmentRepositoryImpl();
     private IPositionRepository positionRepository = new PositionRepositoryImpl();
 
+
     @Override
     public List<Account> findAll() {
         List<Account> accounts = accountRepository.findAll();
@@ -107,6 +108,7 @@ public class AccountServiceImpl implements IAccountService {
         String header = "";
         int accountID = 0;
         Map<String, Account> mapByEmail = accountRepository.mapByEmail();
+
         try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
             header = br.readLine();// bo di dong header
             String line;
