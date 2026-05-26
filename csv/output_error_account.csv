@@ -1,0 +1,6 @@
+line,error
+username1,full_name1,email1,1,1,Email tồn tại
+username2,full_name2,email2,2,2,Email tồn tại
+username3,full_name3,email3,2,4,Email tồn tại
+username4,full_name4,email4,3,4,Email tồn tại
+username5,full_name5,email5,4,1,Email tồn tại
