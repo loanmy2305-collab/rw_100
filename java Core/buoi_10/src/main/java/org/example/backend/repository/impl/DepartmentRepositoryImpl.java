@@ -8,9 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DepartmentRepositoryImpl implements IDepartmentRepository {
     @Override
@@ -81,7 +79,7 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
             // b1: kết nối đến DB
             connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng department
-            String sql = "select * from department where department_name like ? ";
+            String sql = "insert into department (department_name) values (?); ";
             preparedStatement = connection.prepareStatement(sql);
             for (Department department : list){
                 preparedStatement.setString(1, department.getName());
@@ -98,6 +96,36 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
         return false;
     }
 
+    @Override
+    public Map<String, Department> mapByName() {
+        Connection connection =  null;
+        Statement statement =  null;
+        ResultSet rs =  null;
+        Map<String, Department>mapByName = new HashMap<>(); // lưu lại dữ liệu lấy từ DB
+
+        try {
+            // b1: kết nối đến DB
+            connection = JDBCUtils.getConnection();
+            // b2: lấy dữ liệu từ bảng department
+            String sql = "select * from department order by department_id asc; ";
+            statement = connection.createStatement();
+
+            rs = statement.executeQuery(sql);// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+
+            while (rs.next()) {
+                int id = rs.getInt("department_id");//lấy ra gtri từ cloumn department_id
+                String name = rs.getString("department_name"); //lấy ra gtri từ cloumn department_name
+                Department dep = new Department(id, name);
+                mapByName.put(name, dep);
+            }
+        } catch (Exception e) {// show các lỗi lien quan đén logic xử lý
+            e.printStackTrace();// show ra exception
+        } finally {
+            JDBCUtils.closeConnection(connection, statement, rs);
+
+        }
+        return mapByName;
+    }
     @Override
     public boolean delete(int id) {
         Connection connection =  null;

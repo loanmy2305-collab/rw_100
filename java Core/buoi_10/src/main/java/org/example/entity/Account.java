@@ -1,6 +1,7 @@
 package org.example.entity;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class Account {
     private int id;
@@ -9,45 +10,36 @@ public class Account {
     private String email;
     private Department department;
     private Position position;
-    private LocalDate createDate;
+    private Date createDate;
 
-
-    public Account() {
-
-    }
-
-    public Account(int id, String username, String fullName) {
-        this.id = id;
-        this.username = username;
-        this.fullName = fullName;
-    }
-
-    public Account(int id, String fullName) {
-        this.id = id;
-        this.fullName = fullName;
-    }
-
-    public Account(int id, String username, String fullName, String email) {
-        this.id = id;
-        this.username = username;
-        this.fullName = fullName;
-        this.email = email;
-    }
 
     public Account(String username, String fullName, String email, Department department, Position position) {
-
         this.username = username;
         this.fullName = fullName;
         this.email = email;
         this.department = department;
         this.position = position;
-        this.createDate = LocalDate.now();
+        this.createDate = new Date();
     }
 
-    public Account(Integer id, String userName, String fullName, String email, Department department, Position position, LocalDate createDate) {
+    public Account(int id, String username, String fullName, String email, Department department, Position position) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.department = department;
+        this.position = position;
+        this.createDate = new Date();
     }
 
-    public Account(String username, String fullName, String email, String departmentId, String positionId) {
+    public Account(int id, String username, String fullName, String email, Department department, Position position, Date createDate) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.department = department;
+        this.position = position;
+        this.createDate = createDate;
     }
 
     public int getId() {
@@ -98,11 +90,11 @@ public class Account {
         this.position = position;
     }
 
-    public LocalDate getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDate createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 }

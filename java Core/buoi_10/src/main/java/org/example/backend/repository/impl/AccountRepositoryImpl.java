@@ -49,7 +49,7 @@ public class AccountRepositoryImpl implements IAccountRepository {
                 Position position = new Position(positionID, PositionName.valueOf(positionName));
 
 
-                Account acc = new Account(id, userName, fullName, email);
+                Account acc = new Account(id, userName, fullName, email, department, position);
                 accounts.add(acc);
             }
             JDBCUtils.closeConnection(connection, statement, rs);
@@ -176,7 +176,7 @@ public class AccountRepositoryImpl implements IAccountRepository {
                 String departmentName = rs.getString("department_name");
                 Integer positionID = rs.getInt("position_id");
                 String positionName = rs.getString("position_name");
-                LocalDate createDate = rs.getDate("create_date").toLocalDate();
+                Date createDate = rs.getDate("create_date");
 
                 Department department = new Department(departmentID, departmentName);
                 Position position = new Position(positionID, PositionName.valueOf(positionName));
@@ -228,7 +228,7 @@ public class AccountRepositoryImpl implements IAccountRepository {
                 Department department = new Department(departmentID, departmentName);
                 Position position = new Position(positionID, PositionName.valueOf(positionName));
 
-                Account account = new Account(id, userName, fullName, email, department, position, createDate.toLocalDate());
+                Account account = new Account(id, userName, fullName, email, department, position, createDate);
                 accounts.add(account);
                 JDBCUtils.closeConnection(connection, prepareStatement, rs);
             }
@@ -273,7 +273,7 @@ public class AccountRepositoryImpl implements IAccountRepository {
                 Department department = new Department(departmentID, departmentName);
                 Position position = new Position(positionID, PositionName.valueOf(positionName));
 
-                Account account = new Account(id, userName, fullName, email, department, position, createDate.toLocalDate());
+                Account account = new Account(id, userName, fullName, email, department, position, createDate);
                 mapByUsername.put(userName, account);
             }
         } catch (Exception e) {
@@ -417,13 +417,13 @@ public class AccountRepositoryImpl implements IAccountRepository {
         try {
             connection = JDBCUtils.getConnection();
 
-            String sql = "insert into account (username, full_name ,email, department_Id, position_Id)\n +" +
+            String sql = "insert into account (username, full_name ,email, department_Id, position_Id)\n " +
                     " values ( ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(sql);
             for (Account account : accounts) {
-                preparedStatement.setString(1, account.getEmail());
-                preparedStatement.setString(2, account.getUsername());
-                preparedStatement.setString(3, account.getFullName());
+                preparedStatement.setString(1, account.getUsername());
+                preparedStatement.setString(2, account.getFullName());
+                preparedStatement.setString(3, account.getEmail());
                 preparedStatement.setInt(4, account.getDepartment().getId());
                 preparedStatement.setInt(5, account.getPosition().getId());
                 preparedStatement.addBatch();
@@ -439,6 +439,50 @@ public class AccountRepositoryImpl implements IAccountRepository {
             JDBCUtils.closeConnection(connection, preparedStatement, null);
         }
         return false;
+    }
+
+    @Override
+    public Map<String, Account> mapByEmail() {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+        Map<String, Account>mapByEmail = new HashMap<>();// lưu lại dữ liệu lấy từ DB
+        try {
+            // b1: kết nối đến DB
+            connection = JDBCUtils.getConnection();
+            // b2: lấy dữ liệu từ bảng account
+            String sql = "select acc.*, de.department_name, po.position_name \n" +
+                    "from account acc\n" +
+                    "left join department de on acc.department_id = de.department_id\n" +
+                    "left join position po on acc.position_id = po.position_id;";
+            statement = connection.createStatement();
+            rs = statement.executeQuery(sql);// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            while (rs.next()) {// lặp qua qua từng dòng của rs
+                Integer id = rs.getInt("account_id");// lấy giá trị từ cloumn account_id
+                String email = rs.getString("email");//lấy giá trị từ cloumn account_name
+                String userName = rs.getString("username");
+                String fullName = rs.getString("full_name");
+                Integer departmentID = rs.getInt("department_id");
+                String departmentName = rs.getString("department_name");
+                Integer positionID = rs.getInt("position_id");
+                String positionName = rs.getString("position_name");
+                Date createDate = rs.getDate("create_date");
+
+                Department department = new Department(departmentID, departmentName);
+                Position position = new Position(positionID, PositionName.valueOf(positionName));
+
+                Account account = new Account(id, userName, fullName, email, department, position, createDate);
+                mapByEmail.put(email, account);
+            }
+        } catch (Exception e) {
+            System.out.println("Kết nối DB ko thành công");
+            e.printStackTrace();
+        } finally {
+            // đóng kết ối
+            JDBCUtils.closeConnection(connection, statement, rs);
+        }
+        return mapByEmail;
+    }
     }
 
 
@@ -463,7 +507,7 @@ public class AccountRepositoryImpl implements IAccountRepository {
 //        }
 //        return checkUsernameExist;
 //    }
-}
+
 
 
 

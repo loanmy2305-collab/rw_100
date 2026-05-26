@@ -23,6 +23,7 @@ public interface IAccountRepository {
 
     boolean update(int id, String updateName);
     boolean createListAccount(List<Account> accounts);
+    Map<String, Account> mapByEmail();
 
 
 }
