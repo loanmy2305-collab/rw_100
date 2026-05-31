@@ -9,13 +9,17 @@ import org.example.entity.Position;
 import org.example.utils.ScannerUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+
 
 public class AccountFunction {
     private AccountController accountController = new AccountController();
     private DepartmentController departmentController = new DepartmentController();
     private PositionController positionController = new PositionController();
     private static Scanner scanner = new Scanner(System.in);
+    private Object Map;
+
 
     public  void run()  {
         while (true) {
@@ -24,10 +28,9 @@ public class AccountFunction {
             System.out.println("2.them mới tài khoan");
             System.out.println("3.update tài khoan");
             System.out.println("4.xóa tài khoan");
-            System.out.println("5.tìm kiếm chức vụ theo tên");
-            System.out.println("6.tìm kiếm chức vụ theo tên và username");
-            System.out.println("7. Import file CSV ");
-            System.out.println("8.thoát");
+            System.out.println("5. Map account by username");
+            System.out.println("6. Import file CSV ");
+            System.out.println("7.thoát");
 
             String choice = scanner.nextLine();
             switch (choice) {
@@ -45,7 +48,9 @@ public class AccountFunction {
                     this.updateAccount();
                     break;
                 case "5":
-                    this.findByIdAndName();
+                    Map<String, Account> map = accountController.mapAccountByUsername();
+                    Account acc = map.get("loan");
+
                     break;
                 case "6":
                     this.importAccountFromCSV();

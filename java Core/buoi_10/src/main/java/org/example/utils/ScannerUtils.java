@@ -5,6 +5,10 @@ import java.util.Scanner;
 
 public class ScannerUtils {
     private static Scanner scanner = new Scanner(System.in);
+    public static final String EMAIL_REGEX = "^[a-zA-Z0-9_+.-]+@[a-zA-Z0-9.-]+$";
+    public static final String NUMBER_REGEX = "^[0-9]+$";
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
+    public static final Integer ZERO = 0;
 
     public static String inputString() {
         String text;
