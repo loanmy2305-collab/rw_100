@@ -2,32 +2,32 @@ package org.example.dto;
 
 import java.util.List;
 
-public class ImportError {
-    private  String line; //  dữ liệu trong row trên file csv
-    private List<String> mesage;
+public class ImportError<T> {
+    private  T csv; //  dữ liệu trong row trên file csv
+    private List<String> message;
 
     public ImportError(){
 
     }
 
-    public ImportError(String line, List<String> mesage) {
-        this.line = line;
-        this.mesage = mesage;
+    public ImportError(T line, List<String> message) {
+        this.csv = line;
+        this.message = message;
     }
 
-    public String getLine() {
-        return line;
+    public T getCsv() {
+        return csv;
     }
 
-    public void setLine(String line) {
-        this.line = line;
+    public void setCsv(T csv) {
+        this.csv = csv;
     }
 
-    public List<String> getMesage() {
-        return mesage;
+    public List<String> getMessage() {
+        return message;
     }
 
-    public void setMesage(List<String> mesage) {
-        this.mesage = mesage;
+    public void setMessage(List<String> message) {
+        this.message = message;
     }
 }

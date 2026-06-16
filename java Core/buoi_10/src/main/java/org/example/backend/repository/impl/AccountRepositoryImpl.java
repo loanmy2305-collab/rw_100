@@ -244,6 +244,44 @@ public class AccountRepositoryImpl implements IAccountRepository {
 
     @Override
     public Map<String, Account> mapAccountByUsername() {
+        Map<String, Account> mapAccountByUsername = new HashMap<>();
+        try {
+            // b1: kết nối đến DB
+            Connection connection = JDBCUtils.getConnection();
+            // b2: lấy dữ liệu từ bảng account
+            String sql = "select acc.*, de.department_name, po.position_name \n" +
+                    "from account acc\n" +
+                    "left join department de on acc.department_id = de.department_id\n" +
+                    "left join position po on acc.position_id = po.position_id;";
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            while (rs.next()) {// lặp qua qua từng dòng của rs
+                Integer id = rs.getInt("account_id");// lấy giá trị từ cloumn account_id
+                String email = rs.getString("email");//lấy giá trị từ cloumn account_name
+                String userName = rs.getString("username");
+                String fullName = rs.getString("full_name");
+                Integer departmentID = rs.getInt("department_id");
+                String departmentName = rs.getString("department_name");
+                Integer positionID = rs.getInt("position_id");
+                String positionName = rs.getString("position_name");
+                Date createDate = rs.getDate("create_date");
+
+                Department department = new Department(departmentID, departmentName);
+                Position position = new Position(positionID, PositionName.valueOf(positionName));
+
+                Account account = new Account(id, userName, fullName, email, department, position, createDate);
+
+                mapAccountByUsername.put(userName, account);
+            }
+        } catch (Exception e) {
+            System.out.println("Kết nối DB ko thành công");
+            e.printStackTrace();
+        }
+        return mapAccountByUsername;
+    }
+
+    @Override
+    public Map<String, Account> mapByUsername() {
         //  key ,  value    key ko được trùng lặp
         Map<String, Account> mapByUsername = new HashMap<>();// lưu lại dữ liệu lấy từ DB
         Connection connection = null;
@@ -442,21 +480,19 @@ public class AccountRepositoryImpl implements IAccountRepository {
     }
 
     @Override
-    public Map<String, Account> mapByEmail() {
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        Map<String, Account>mapByEmail = new HashMap<>();// lưu lại dữ liệu lấy từ DB
+    public Map<String, Account> mapAccountByEmail() {
+        //  key ,  value    key ko được trùng lặp
+        Map<String, Account> mapByUsername = new HashMap<>();// lưu lại dữ liệu lấy từ DB
         try {
             // b1: kết nối đến DB
-            connection = JDBCUtils.getConnection();
+            Connection connection = JDBCUtils.getConnection();
             // b2: lấy dữ liệu từ bảng account
             String sql = "select acc.*, de.department_name, po.position_name \n" +
                     "from account acc\n" +
                     "left join department de on acc.department_id = de.department_id\n" +
                     "left join position po on acc.position_id = po.position_id;";
-            statement = connection.createStatement();
-            rs = statement.executeQuery(sql);// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);// thực thi câu lệnh sql và gán bảng trả ra vào ResultSet rs
             while (rs.next()) {// lặp qua qua từng dòng của rs
                 Integer id = rs.getInt("account_id");// lấy giá trị từ cloumn account_id
                 String email = rs.getString("email");//lấy giá trị từ cloumn account_name
@@ -472,18 +508,17 @@ public class AccountRepositoryImpl implements IAccountRepository {
                 Position position = new Position(positionID, PositionName.valueOf(positionName));
 
                 Account account = new Account(id, userName, fullName, email, department, position, createDate);
-                mapByEmail.put(email, account);
+                mapByUsername.put(userName, account);
             }
         } catch (Exception e) {
             System.out.println("Kết nối DB ko thành công");
             e.printStackTrace();
-        } finally {
-            // đóng kết ối
-            JDBCUtils.closeConnection(connection, statement, rs);
         }
-        return mapByEmail;
+        return mapByUsername;
     }
-    }
+
+
+}
 
 
     //  @Override

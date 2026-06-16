@@ -1,11 +1,13 @@
 package org.example.backend.service;
 
+import org.example.dto.context.AccountContext;
+import org.example.dto.csv.AccountCsv;
 import org.example.entity.Account;
 
 import java.util.List;
 import java.util.Map;
 
-public interface IAccountService {
+public interface IAccountService  extends  ImportFileCSV<AccountContext,Account, AccountCsv> {
     List<Account> findAll();
     boolean insert(String username, String fullName, String email, int depId, int posId);
     boolean deleteAccount(int id);

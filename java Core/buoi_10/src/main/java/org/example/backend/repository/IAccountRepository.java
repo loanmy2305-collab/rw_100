@@ -15,15 +15,18 @@ public interface IAccountRepository {
     List<Account> findByName(String name);
     Map<String, Account> mapAccountByUsername();
 
+    Map<String, Account> mapAccountByEmail();
+
+    Map<String, Account> mapByUsername();
+
+
     boolean checkUsernameExist(String username, Integer id);
 
     boolean checkEmailExist(String email);
 
     boolean checkIdExist(Integer id);
-
     boolean update(int id, String updateName);
     boolean createListAccount(List<Account> accounts);
-    Map<String, Account> mapByEmail();
 
 
 }

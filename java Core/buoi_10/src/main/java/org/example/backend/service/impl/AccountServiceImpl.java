@@ -8,9 +8,13 @@ import org.example.backend.repository.impl.DepartmentRepositoryImpl;
 import org.example.backend.repository.impl.PositionRepositoryImpl;
 import org.example.backend.service.IAccountService;
 import org.example.dto.ImportError;
+import org.example.dto.context.AccountContext;
+import org.example.dto.context.DepartmentContext;
+import org.example.dto.csv.AccountCsv;
 import org.example.entity.Account;
 import org.example.entity.Department;
 import org.example.entity.Position;
+import org.example.utils.ScannerUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -62,7 +66,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public Map<String, Account> mapAccountByUsername() {
-        return accountRepository.mapAccountByUsername();
+        return accountRepository.mapByUsername();
     }
 
     @Override
@@ -86,129 +90,279 @@ public class AccountServiceImpl implements IAccountService {
         return accountRepository.update(id, updateName);
     }
 
-    @Override
-    public String importAccountFromCSV(String pathName) {
-        // check file c tồn tại không
-        File file = new File(pathName);
-        if (!file.exists()) {
-            return "file không tồn tai";
+
+
+//    @Override
+//    public String importAccountFromCSV(String pathName) {
+//        // check file c tồn tại không
+//        File file = new File(pathName);
+//        if (!file.exists()) {
+//            return "File không tồn tại";
+//        }
+//        if (!pathName.endsWith(".csv")) {
+//            return "File ko đúng định dạng!";
+//        }
+//        List<Account> accounts = new ArrayList<>();
+//        boolean firstLine = true;
+//        boolean checkImport = false;
+//        String header = "";
+//        int accountID = 0;
+//        List<ImportError<AccountCsv>> importErrors = new ArrayList<>();
+//        Map<String, Account> mapAccountByUsername = accountRepository.mapByUsername();
+//        Map<String, Account> mapAccountByEmail = accountRepository.mapAccountByEmail();
+//        List<Department> departments = departmentRepository.findAll();// kiem tra xem departmentID import vao co ton tai hay ko
+//        List<Position> positions = positionRepository.findAll();
+//        try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
+//            header = br.readLine();// bo di dong header
+//            String line;
+//            while ((line = br.readLine()) != null) {
+//                this.validation(line, mapAccountByUsername, mapAccountByEmail, departments, positions, accounts, importErrors);
+//            }
+//            if (!accounts.isEmpty()) {
+//                checkImport = accountRepository.createListAccount(accounts);
+//            }
+//
+//            // xuat file
+//            String pathError = "C:\\Users\\FPT\\Desktop\\rw100\\csv\\account_error.csv";// nơi mà sẽ lưu file lỗi
+//            this.exportCSV(header, pathError, importErrors);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        String message = "";
+//        if (importErrors.isEmpty()) {
+//            message = "Import thành công";
+//        }
+//        if (accounts.isEmpty()) {
+//            message = "Import ko thành công, đã xuất file lỗi csv\\account_error.csv";
+//        }
+//        if (!importErrors.isEmpty() && !accounts.isEmpty()) {
+//            message = "Import thành công " + accounts.size() + " nhân viên, " +
+//                    "đã xuất lỗi ra file csv\\account_error.csv";
+//        }
+//        return message;
+//    }
+
+    public void validation(String line, Map<String, Account> mapByUsername, Map<String, Account> mapByEmail,
+                           List<Department> departments, List<Position> positions, List<Account> accountSuccess,
+                           List<ImportError<AccountCsv>> importErrors) {
+        String[] fields = line.split(",", -1);
+        List<String> errors = new ArrayList<>();
+        String username = fields[0];
+        String email = fields[1];
+        String fullName = fields[2];
+        String departmentId = fields[3];//"1"  "2"
+        String positionId = fields[4];
+        AccountCsv accountCsv = new AccountCsv(email, fullName, username, departmentId, positionId);
+
+        //validation
+        if (Objects.isNull(username) || username.trim().isEmpty()) {
+            errors.add("Username không dc để trống");
+        } else if (mapByUsername.get(username) != null) {// check xem username da ton tai chua
+            errors.add("Username đã tồn tại");
         }
 
-        // dọc dữ liệu từ file và dưa dữ lệu cho repository để lưu vào DB
-        if (!pathName.endsWith(".csv")) {
-            return "dịnh dạng file không đuúng";
+        if (Objects.isNull(email) || email.trim().isEmpty()) {
+            errors.add("Email không dc để trống");
+        } else if (!email.matches(ScannerUtils.EMAIL_REGEX)) {// kiểm tra  định dạng email "a@b"
+            errors.add("Email không đúng định dạng");
+        } else if (mapByEmail.get(email) != null) {// check xem username da ton tai chua
+            errors.add("Email đã tồn tại");
         }
-        //C:\Users\LOAN\Documents\rw_100\csv\input_account.csv
-//        // FileReader:là 1 đói tượng dùngdể đọc file ,đọc từng kí tự
-//        // BuferrdReader: hỗ trợ đọc theo từng dòng
 
-        List<ImportError> importErrors = new ArrayList<>();
-        List<Account> accounts = new ArrayList<>();
-        boolean firstLine = true;
-        String header = "";
-        int accountID = 0;
-        Map<String, Account> mapByEmail = accountRepository.mapByEmail();
+        if (Objects.isNull(fullName) || fullName.trim().isEmpty()) {
+            errors.add("FullName không dc để trống");
+        }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
-            header = br.readLine();// bo di dong header
-            String line;
-            while ((line = br.readLine()) != null) {
-                this.validation(line, mapByEmail, accounts, importErrors);
+        // kiêm tra xem day phai la so hay ko
+        Department department = null;
+        if (!departmentId.matches(ScannerUtils.NUMBER_REGEX)) {
+            errors.add("DepartmentId phải là số");
+        } else {
+            // kiểm tra xem departmentId có tồn tại ko
+            boolean checkDepartment = false;
+            for (Department de : departments) {
+                if (de.getId() == Integer.parseInt(departmentId)) {
+                    department = de;
+                    checkDepartment = true;
+                    break;
+                }
             }
-            accountRepository.createListAccount(accounts);
-            // xuất ra file lỗi
-            String pathError = "\\Users\\LOAN\\Documents\\rw_100\\csv\\output_error_account.csv";
-            this.exportFileCSV(importErrors, pathError);
-
-        } catch (Exception e) {
-//            throw new RuntimeException(e);
+            if (!checkDepartment) {
+                errors.add("DepartmentId này không tồn tại");
+            }
         }
 
+        // kiêm tra xem day phai la so hay ko
+        Position position = null;
+        if (!positionId.matches(ScannerUtils.NUMBER_REGEX)) {
+            errors.add("PositionId phải là số");
+        } else {
+            // kiểm tra xem positionId có tồn tại ko
+            boolean checkPosition = false;
+            for (Position po : positions) {
+                if (po.getId() == Integer.parseInt(positionId)) {
+                    position = po;
+                    checkPosition = true;
+                    break;
+                }
+            }
+            if (!checkPosition) {
+                errors.add("PositionId này không tồn tại");
+            }
+        }
+        if (errors.isEmpty()) {// nếu ko có 1 loi nao
+            Account account = new Account(username, fullName, email, department, position);
+            accountSuccess.add(account);
 
-        String message = "";
-        if (importErrors.isEmpty()) {
-            message = "Import thành công";
+            mapByEmail.put(email, account);
+            mapByUsername.put(username, account);
+        } else {
+            // them line lỗi + ds lỗi liên quan vao list de ti nữa xuat file loi
+            ImportError<AccountCsv> error = new ImportError(accountCsv, errors);
+            importErrors.add(error);
         }
-        if (accounts.isEmpty()) {
-            message = "Import k thành công , đã xuất file lỗi csv\\ouput_error_account.csv";
-        }
-        if (!importErrors.isEmpty() && !accounts.isEmpty()) {
-            message = "Import thành công" + accounts.size() + "chức vụ " +
-                    "đã xuất file lỗi csv\\ouput_error_account.csv";
-        }
-        return message;
     }
 
-    public void exportFileCSV(List<ImportError> importErrors, String pathError) {
-
+    public void exportCSV(String header, String pathError, List<ImportError<AccountCsv>> importErrors) {
         if (!importErrors.isEmpty()) {
             try {
-                // String pathError = "\\Users\\LOAN\\Documents\\rw_100\\csv\\output_error_account.csv";
                 BufferedWriter bw = new BufferedWriter(new FileWriter(pathError));
-                // ghi header
-                bw.write("line,error");
+                bw.write(header + ",error_message");
                 bw.newLine();
-                for (ImportError errors : importErrors) {
-                    String ln = errors.getLine() + "," + String.join("|", errors.getMesage());
+                for (ImportError error : importErrors) {
+                    String ln = error.getCsv().toString() + "," + String.join("|", error.getMessage());
                     bw.write(ln);
                     bw.newLine();
                 }
                 bw.flush();
             } catch (Exception e) {
-//                      e.printStackTrace();
             }
         }
     }
 
-    public void validation(String line, Map<String, Account> mapByName, List<Account> accounts, List<ImportError> importErrors) {
+    @Override
+    public void validation(String line, AccountContext context, List<Account> etities, List<ImportError<AccountCsv>> importErrors) {
 
-        Map<String, Account> mapByEmail = accountRepository.mapByEmail();
-        List<Department> departments = departmentRepository.findAll();// kiem tra xem departmentID import vao co ton tai hay ko
-        List<Position> positions = positionRepository.findAll();
         String[] fields = line.split(",", -1);
         List<String> errors = new ArrayList<>();
         String username = fields[0];
-        String fullName = fields[1];
-        String email = fields[2];
-        String departmentId = fields[3];
+        String email = fields[1];
+        String fullName = fields[2];
+        String departmentId = fields[3];//"1"  "2"
         String positionId = fields[4];
+        AccountCsv accountCsv = new AccountCsv(email, fullName, username, departmentId, positionId);
 
-        Department department = null;
-        for (Department de : departments) {
-            if (de.getId() == Integer.parseInt(departmentId)) {
-                department = de;
-                break;
-            }
-        }
-        Position position = null;
-        for (Position po : positions) {
-            if (po.getId() == Integer.parseInt(positionId)) {
-                position = po;
-                break;
-            }
+        //validation
+        if (Objects.isNull(username) || username.trim().isEmpty()) {
+            errors.add("Username không dc để trống");
+        } else if (mapAccountByUsername().get(username) != null) {// check xem username da ton tai chua
+            errors.add("Username đã tồn tại");
         }
 
-        // validation
+        if (Objects.isNull(email) || email.trim().isEmpty()) {
+            errors.add("Email không dc để trống");
+        } else if (!email.matches(ScannerUtils.EMAIL_REGEX)) {// kiểm tra  định dạng email "a@b"
+            errors.add("Email không đúng định dạng");
+        } else if (mapAccountByUsername().get(email) != null) {// check xem username da ton tai chua
+            errors.add("Email đã tồn tại");
+        }
 
         if (Objects.isNull(fullName) || fullName.trim().isEmpty()) {
-            // tên  không được để troosng
-            errors.add(" tên  không được để trống");
+            errors.add("FullName không dc để trống");
         }
-        if (Objects.isNull(email) || email.trim().isEmpty()) {
-            errors.add("email rỗng");
-        } else if (mapByEmail.get(email) != null) {
-            errors.add("Email tồn tại");
-        }
-        if (errors.isEmpty()) {
-            Account acc = new Account(username, fullName, email, department, position);
-            accounts.add(acc);
-            mapByEmail.put(email, acc);
+
+        // kiêm tra xem day phai la so hay ko
+        Department department = null;
+        if (!departmentId.matches(ScannerUtils.NUMBER_REGEX)) {
+            errors.add("DepartmentId phải là số");
         } else {
-            ImportError importError = new ImportError(line, errors);
-            importErrors.add(importError);
+            // kiểm tra xem departmentId có tồn tại ko
+            boolean checkDepartment = false;
+            for (Department de : context.getDepartments() ) {
+                 if (de.getId() == Integer.parseInt(departmentId)) {
+                    department = de;
+                    checkDepartment = true;
+                    break;
+                }
+            }
+            if (!checkDepartment) {
+                errors.add("DepartmentId này không tồn tại");
+            }
+        }
+
+        // kiêm tra xem day phai la so hay ko
+        Position position = null;
+        if (!positionId.matches(ScannerUtils.NUMBER_REGEX)) {
+            errors.add("PositionId phải là số");
+        } else {
+            // kiểm tra xem positionId có tồn tại ko
+            boolean checkPosition = false;
+            for (Position po : context.getPositions()) {
+                if (po.getId() == Integer.parseInt(positionId)) {
+                    position = po;
+                    checkPosition = true;
+                    break;
+                }
+            }
+            if (!checkPosition) {
+                errors.add("PositionId này không tồn tại");
+            }
+        }
+        if (errors.isEmpty()) {// nếu ko có 1 loi nao
+            Account account = new Account(username, fullName, email, department, position);
+            etities.add(account);
+
+            mapAccountByUsername().put(email, account);
+            mapAccountByUsername().put(username, account);
+        } else {
+            // them line lỗi + ds lỗi liên quan vao list de ti nữa xuat file loi
+            ImportError<AccountCsv> error = new ImportError(accountCsv, errors);
+            importErrors.add(error);
         }
     }
+
+    @Override
+    public void saveAll(List<Account> entities) {
+        accountRepository.createListAccount(entities);
+
     }
+
+    @Override
+    public void exportFileError(List<ImportError<AccountCsv>> importErrors, String pathError) {
+
+
+        if (!importErrors.isEmpty()) {
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(pathError));
+                bw.write(",error_message");
+                bw.newLine();
+                for (ImportError error : importErrors) {
+                    String ln = error.getCsv().toString() + "," + String.join("|", error.getMessage());
+                    bw.write(ln);
+                    bw.newLine();
+                }
+                bw.flush();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    @Override
+    public String importAccountFromCSV(String pathName) {
+       String pathError = "C:\\Users\\LOAN\\OneDrive\\Tài liệu\\rw_100\\csv\\account_error.csv";// nơi mà sẽ lưu file lỗi
+
+        //lap ra map -> đưa map vào accountcontex
+        Map<String, Account> mapAccountByUsername = accountRepository.mapAccountByUsername();
+        Map<String, Account> mapAccountByEmail = accountRepository.mapAccountByEmail();
+        List<Department> departments = departmentRepository.findAll();
+        List<Position> positions = positionRepository.findAll();
+        AccountContext context = new AccountContext(mapAccountByUsername,mapAccountByEmail,departments,positions);
+        String message = this.importFileCSV(pathName, context, pathError);
+        return message;
+    }
+
+}
 
 
 
