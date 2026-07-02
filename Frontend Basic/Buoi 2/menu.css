@@ -1,0 +1,47 @@
+.container{
+    width: 80%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-areas: 
+        "header header header"
+        "nav nav nav"
+        "mleft main mright"
+        "footer footer footer";
+    gap: 5px;   
+}
+.header{
+    grid-area: header;
+    height: 100px;
+}
+.navigation{
+    grid-area: nav;
+    height: 80px;
+}
+.cleft{
+    grid-area: mleft;
+    height: 300px;
+}
+.main{
+    grid-area: main;
+    height: 300px;
+}
+.cright{
+    grid-area: mright;
+    height: 300px;
+}
+.footer{
+    grid-area: footer;
+    height: 80px;
+}
+.header,
+.navigation,
+.cleft,
+.main,
+.cright,
+.footer{
+    background-color: rgb(175, 173, 173);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

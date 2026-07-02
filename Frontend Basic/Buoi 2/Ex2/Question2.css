@@ -1,0 +1,43 @@
+body {
+    text-align: center;
+    font-family: "Times New Roman", serif;
+}
+
+h1 {
+    color: hotpink;
+    background: pink;
+    margin: 20px 50px;
+}
+
+.content {
+    background: #e7ec8a;
+    margin: 20px 50px;
+    padding: 20px;
+}
+
+.blue {
+    color: blue;
+    font-size: 18px;
+}
+
+.red {
+    color: red;
+    font-size: 18px;
+}
+
+.green {
+    color: green;
+    font-size: 18px;
+}
+
+hr {
+    width: 40%;
+    margin: 20px auto;
+}
+
+.label {
+    display: inline-block;
+    width: 120px; /* chỉnh theo ý */
+    font-weight: bold;
+    text-decoration: underline;
+}
