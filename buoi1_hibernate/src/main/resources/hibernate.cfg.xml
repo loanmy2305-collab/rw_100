@@ -18,12 +18,15 @@
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
         <property name="highlight_sql">true</property>
-
-        <!--        <property name="hbm2ddl.auto">update</property>-->
+<!--        tạo các bảng hoặc các column đang thiếu so với sql-->
+                <property name="hbm2ddl.auto">update</property>
 
 <!--        khai báo cho hibernate biết caác class nào đang được mapping-->
         <mapping class="org.example.entity.Department"/>
         <mapping class="org.example.entity.Position"/>
+        <mapping class="org.example.entity.Account"/>
+        <mapping class="org.example.entity.Group"/>
+        <mapping class="org.example.entity.GroupAccount"/>
 
     </session-factory>
 </hibernate-configuration>

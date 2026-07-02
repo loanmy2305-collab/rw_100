@@ -1,8 +1,9 @@
 package org.example.repository.impl;
 
+import org.example.entity.Account;
+import org.example.repository.IDepartmentRepository;
 import org.hibernate.query.Query;
 import org.example.entity.Department;
-import org.example.repository.IDepartmetRepository;
 import org.example.utils.HibernateUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,14 +11,15 @@ import org.hibernate.SessionFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DepartmentRepository implements IDepartmetRepository {
+public class DepartmentRepositoryImpl implements IDepartmentRepository {
     private final SessionFactory sessionFactory = HibernateUtils.sessionFactory;
+
     @Override
     public List<Department> findAll() {
         List<Department> departments = new ArrayList<>();
         Session session = sessionFactory.openSession();
         try {
-            String hql = "From Department";
+            String hql = "From Department";// gọi đén class chứ ko phải table ở sql
             Query<Department> query = session.createQuery(hql, Department.class);
             departments = query.list();// lay ds
         } finally {
@@ -61,10 +63,9 @@ public class DepartmentRepository implements IDepartmetRepository {
         }
     }
 
-
     @Override
     public void update(String updateName, Integer id) {
-        Session session = sessionFactory.openSession();
+        Session session = sessionFactory.openSession();// Connection JDBC
         session.beginTransaction();
         try {
             // tifm ra department caafn update
@@ -75,6 +76,22 @@ public class DepartmentRepository implements IDepartmetRepository {
             session.getTransaction().commit();
         } catch (Exception e) {
             // hoàn lại dữ liệu nếu gặp lỗi
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+    }
+
+    @Override
+    public void delete(Integer id) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        try {
+            // tim acc co id như tren
+            Department department = session.find(Department.class, id);
+            session.remove(department);
+            session.getTransaction().commit();
+        } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
