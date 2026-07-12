@@ -14,7 +14,7 @@ public interface IPositionService {
 
     void deleteById(Integer id);
 
-    void create(PositionCreateOrUpdateForm position);
+    void create(PositionCreateOrUpdateForm account);
 
-    void update(PositionCreateOrUpdateForm position, Integer id);
+    void update(PositionCreateOrUpdateForm account, Integer id);
 }

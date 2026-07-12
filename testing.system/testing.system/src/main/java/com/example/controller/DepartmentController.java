@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/departments")
+@CrossOrigin("*")//http://127.0.0.1:5500/
 public class DepartmentController {
 
     @Autowired
@@ -60,3 +61,4 @@ public class DepartmentController {
         return new ResponseEntity<>("Update thành công", HttpStatus.OK);
     }
 }
+

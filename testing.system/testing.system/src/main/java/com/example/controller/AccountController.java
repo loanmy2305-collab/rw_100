@@ -15,12 +15,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/accounts")
+@CrossOrigin("*")//http://127.0.0.1:5500/
 public class AccountController {
 
     @Autowired
-    private IAccountService accountService;// =new
+    private IAccountService accountService;
 
-    //lấy ds acc
     @GetMapping
     public ResponseEntity<List<AccountDTO>> findAll() {
         return new ResponseEntity<>(accountService.findAll(), HttpStatus.OK);
@@ -48,5 +48,4 @@ public class AccountController {
         accountService.update(form, id);
         return new ResponseEntity<>("Updated", HttpStatus.OK);
     }
-
 }
